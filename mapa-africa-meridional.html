@@ -32,7 +32,8 @@ body{display:flex;flex-direction:column}
 .mwrap{position:relative;width:50px;height:50px;cursor:pointer}
 .mthumb{width:50px;height:50px;border-radius:50%;overflow:hidden;border:3px solid var(--mc,#fff);box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .2s,box-shadow .2s;position:relative}
 .mthumb img{width:100%;height:100%;object-fit:cover;display:block}
-.mflag{position:absolute;bottom:1px;right:1px;width:17px;height:17px;border-radius:50%;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;font-size:10px;pointer-events:none}
+.mflag{position:absolute;bottom:2px;right:2px;width:22px;height:14px;border-radius:2px;overflow:hidden;border:1px solid rgba(255,255,255,.3);pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.7)}
+.mflag img{width:100%;height:100%;object-fit:cover;display:block}
 .mcard{position:absolute;bottom:58px;left:50%;transform:translateX(-50%) scale(.85) translateY(8px);width:285px;background:#161b22;border:1px solid #30363d;border-radius:12px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 32px rgba(0,0,0,.85);transform-origin:50% 100%;cursor:pointer}
 .mcard:hover{border-color:#58a6ff}
 .mwrap:hover .mcard,.mwrap.open .mcard{opacity:1;transform:translateX(-50%) scale(1) translateY(0);pointer-events:auto}
@@ -77,98 +78,101 @@ body{display:flex;flex-direction:column}
   onerror="document.getElementById('err').style.display='flex'"></script>
 <script>
 const CTRY={
-  "Namíbia":      {flag:"🇳🇦",color:"#E07B39"},
-  "Botswana":     {flag:"🇧🇼",color:"#4A90D9"},
-  "Zimbabwe":     {flag:"🇿🇼",color:"#2E8B57"},
-  "Zâmbia":       {flag:"🇿🇲",color:"#C0852A"},
-  "África do Sul":{flag:"🇿🇦",color:"#3aaa5e"},
-  "Moçambique":   {flag:"🇲🇿",color:"#20B2AA"},
-  "Madagascar":   {flag:"🇲🇬",color:"#9B59B6"},
-  "Malawi":       {flag:"🇲🇼",color:"#3498DB"},
+  "Namíbia":      {code:"na",color:"#E07B39"},
+  "Botswana":     {code:"bw",color:"#4A90D9"},
+  "Zimbabwe":     {code:"zw",color:"#2E8B57"},
+  "Zâmbia":       {code:"zm",color:"#C0852A"},
+  "África do Sul":{code:"za",color:"#3aaa5e"},
+  "Moçambique":   {code:"mz",color:"#20B2AA"},
+  "Madagascar":   {code:"mg",color:"#9B59B6"},
+  "Malawi":       {code:"mw",color:"#3498DB"},
 };
+function flagImg(code,h){return `<img src="https://flagcdn.com/w40/${code}.png" height="${h||13}" style="border-radius:2px;vertical-align:middle" alt="">`;}
+function flagBig(code){return `<img src="https://flagcdn.com/w80/${code}.png" height="36" style="border-radius:4px;opacity:.8" alt="">`;}
+
 
 const SPOTS=[
   {name:"Sossusvlei",c:"Namíbia",lat:-24.74,lng:15.34,cat:["paisagem","unico"],
-   photo:"https://images.unsplash.com/photo-1772289093510-2c64b03d7fd5?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Sossusvlei.jpg/500px-Sossusvlei.jpg",
    desc:"Dunas de areia vermelha de até 325m — as mais altas do mundo. Ao nascer do sol, o deserto vira ouro.",tags:["Dunas","Deserto","Fotografia"]},
   {name:"Etosha Pan",c:"Namíbia",lat:-18.86,lng:16.33,cat:["safari"],
-   photo:"https://images.unsplash.com/photo-1543055131-ac87bf2f6ac1?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Dust_Cloud_in_Etosha_National_Park.jpg/500px-Dust_Cloud_in_Etosha_National_Park.jpg",
    desc:"Salina imensa com aguadas que atraem elefantes, rinocerontes e leões. Perfeita para auto-drive.",tags:["Big 5","Auto-drive","Aguadas"]},
   {name:"Fish River Canyon",c:"Namíbia",lat:-27.58,lng:17.59,cat:["paisagem"],
-   photo:"https://images.unsplash.com/photo-1629568995795-a4b99f845243?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Fish_River_Canyon_from_Main_View_Point.jpg/500px-Fish_River_Canyon_from_Main_View_Point.jpg",
    desc:"2º maior cânion do mundo — 550m de profundidade, 160km de comprimento.",tags:["Cânion","Trekking","Geologia"]},
   {name:"Skeleton Coast",c:"Namíbia",lat:-21.0,lng:13.5,cat:["unico","paisagem"],
-   photo:"https://images.unsplash.com/photo-1528161498624-89b0174b714d?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Namibia_Skelettk%C3%BCste-Nationalpark_Kreuzkap_06.jpg/500px-Namibia_Skelettk%C3%BCste-Nationalpark_Kreuzkap_06.jpg",
    desc:"Costa brutal com nevoeiros atlânticos, ossos de baleias e focas. Extremamente remota.",tags:["Costa","Remoto","Névoa"]},
 
   {name:"Delta do Okavango",c:"Botswana",lat:-19.28,lng:22.92,cat:["safari","unico"],
-   photo:"https://images.unsplash.com/photo-1590214766638-c8dbb1262b79?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Okavango_Delta%2C_Botswana1.jpg/500px-Okavango_Delta%2C_Botswana1.jpg",
    desc:"Único delta interior do mundo — 15.000 km² de canais e vida selvagem. Safari em mokoro.",tags:["UNESCO","Mokoro","Big 5"]},
   {name:"Chobe",c:"Botswana",lat:-17.8,lng:24.9,cat:["safari"],
-   photo:"https://images.unsplash.com/photo-1764614131376-a4fac1025d5f?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Gnus_zebras_chobe_national_park.jpg/500px-Gnus_zebras_chobe_national_park.jpg",
    desc:"Maior concentração de elefantes do planeta — 120.000 indivíduos. Safaris de barco no rio.",tags:["Elefantes","Barco","Rio"]},
   {name:"Makgadikgadi",c:"Botswana",lat:-20.8,lng:25.0,cat:["unico","paisagem"],
-   photo:"https://images.unsplash.com/photo-1662897858851-9cd727176acd?auto=format&fit=crop&w=400&h=200&q=80",
-   desc:"Salinas eternas onde o céu se reflete criando o maior espelho natural da Terra.",tags:["Salinas","Reflexo","Zebras"]},
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Flamingo_migration_Makgadikgadi_Pan.jpg/500px-Flamingo_migration_Makgadikgadi_Pan.jpg",
+   desc:"Salinas eternas onde o céu se reflete criando o maior espelho natural da Terra.",tags:["Salinas","Flamingos","Zebras"]},
 
   {name:"Cataratas Vitória",c:"Zimbabwe",lat:-17.92,lng:25.86,cat:["unico","paisagem"],
-   photo:"https://images.unsplash.com/photo-1636291549333-1f52cbd09393?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Cataratas_Victoria%2C_Zambia-Zimbabue%2C_2018-07-27%2C_DD_04.jpg/500px-Cataratas_Victoria%2C_Zambia-Zimbabue%2C_2018-07-27%2C_DD_04.jpg",
    desc:"'A fumaça que troveja' — 1,7 km de largura e 108m de queda. Uma das 7 Maravilhas Naturais.",tags:["7 Maravilhas","Cachoeira","Épico"]},
   {name:"Mana Pools",c:"Zimbabwe",lat:-15.7,lng:29.4,cat:["safari","unico"],
-   photo:"https://images.unsplash.com/photo-1590214766638-c8dbb1262b79?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/ZmbziRvr.jpg/500px-ZmbziRvr.jpg",
    desc:"Único parque onde walking safari SEM guia é permitido. Leopardos e hipopótamos no Zambeze.",tags:["Walking Safari","UNESCO","Único"]},
   {name:"Matobo Hills",c:"Zimbabwe",lat:-20.5,lng:28.5,cat:["paisagem","unico"],
-   photo:"https://images.unsplash.com/photo-1638146463297-1352cbe7cf3b?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Sunrise_Matobo_Zimbabwe.jpg/500px-Sunrise_Matobo_Zimbabwe.jpg",
    desc:"Labirinto de granito com arte rupestre San de 2.000 anos e maior densidade de águias do mundo.",tags:["Granito","Arte Rupestre","Rinocerontes"]},
 
   {name:"South Luangwa",c:"Zâmbia",lat:-13.0,lng:31.5,cat:["safari","unico"],
-   photo:"https://images.unsplash.com/photo-1517825738774-7de9363ef735?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Luangwa_River_crossing.jpg/500px-Luangwa_River_crossing.jpg",
    desc:"Berço do walking safari moderno — maior densidade de leopardos da África. Noites inesquecíveis.",tags:["Walking Safari","Leopardos","Pioneiro"]},
   {name:"Lower Zambezi",c:"Zâmbia",lat:-15.5,lng:29.2,cat:["safari"],
-   photo:"https://images.unsplash.com/photo-1543055131-ac87bf2f6ac1?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Lower_Zambezi%2C_Zambia_%282518067857%29.jpg/500px-Lower_Zambezi%2C_Zambia_%282518067857%29.jpg",
    desc:"Safari em canoa entre hipopótamos e crocodilos com elefantes na margem do Zambeze.",tags:["Canoa","Hipopótamos","Rio"]},
 
   {name:"Kruger NP",c:"África do Sul",lat:-23.9,lng:31.5,cat:["safari"],
-   photo:"https://images.unsplash.com/photo-1658873165228-f131851e383d?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Kruger_Zebra.JPG/500px-Kruger_Zebra.JPG",
    desc:"O safari mais famoso do mundo — Big 5 garantido, infraestrutura excelente. Ideal para quem começa.",tags:["Big 5","Auto-drive","Acessível"]},
   {name:"Cape Town",c:"África do Sul",lat:-33.92,lng:18.42,cat:["paisagem"],
-   photo:"https://images.unsplash.com/photo-1744604030401-b24c5975a574?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Camps_bay_%2853460319478%29_%28cropped%29.jpg/500px-Camps_bay_%2853460319478%29_%28cropped%29.jpg",
    desc:"Table Mountain, praias de tirar o fôlego e winelands. Uma das cidades mais fotogênicas do mundo.",tags:["Cidade","Montanha","Vinhos"]},
   {name:"Drakensberg",c:"África do Sul",lat:-29.0,lng:29.5,cat:["paisagem"],
-   photo:"https://images.unsplash.com/photo-1638146463297-1352cbe7cf3b?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/South_Africa_-_Drakensberg_%2816261357780%29.jpg/500px-South_Africa_-_Drakensberg_%2816261357780%29.jpg",
    desc:"'Barreira de Lanças' — 3.400m de altitude com a maior coleção de arte rupestre San do mundo.",tags:["Montanhas","Arte San","Trekking"]},
   {name:"Garden Route",c:"África do Sul",lat:-33.9,lng:22.5,cat:["mar","paisagem"],
-   photo:"https://images.unsplash.com/photo-1522879943092-d2b0e4e1da17?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Knysna_%28ZA%29%2C_Knysna_River%2C_East_and_West_Head_--_2024_--_2456.jpg/500px-Knysna_%28ZA%29%2C_Knysna_River%2C_East_and_West_Head_--_2024_--_2456.jpg",
    desc:"300km de costa dramática, florestas milenares, lagunas e avistamento de baleias.",tags:["Costa","Baleias","Drive"]},
 
   {name:"Bazaruto",c:"Moçambique",lat:-21.7,lng:35.5,cat:["mar","unico"],
-   photo:"https://images.unsplash.com/photo-1756572798557-1d196dcf8b2b?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Bazaruto_Island_Mozambique_from_air.jpg/500px-Bazaruto_Island_Mozambique_from_air.jpg",
    desc:"Ilhas com areias brancas e águas turquesa. Dugongos, raias-manta e mergulho world-class.",tags:["Mergulho","Dugongos","Paraíso"]},
   {name:"Ilha de Moçambique",c:"Moçambique",lat:-15.04,lng:40.73,cat:["unico"],
-   photo:"https://images.unsplash.com/photo-1629568995795-a4b99f845243?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Ilha_de_Mocambique.jpg/500px-Ilha_de_Mocambique.jpg",
    desc:"Cidade UNESCO com arquitetura árabe, swahili e portuguesa em menos de 3km². Museu vivo.",tags:["UNESCO","Cultura","Histórico"]},
   {name:"Quirimbas",c:"Moçambique",lat:-11.5,lng:40.5,cat:["mar"],
-   photo:"https://images.unsplash.com/photo-1464925029952-5d9ca1cf4f64?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Ilha_do_Ibo_-_sunset-01.jpg/500px-Ilha_do_Ibo_-_sunset-01.jpg",
    desc:"Recife de coral remoto com tubarões-baleia e manta rays. O Maldivas secreto da África.",tags:["Coral","Tubarão-baleia","Remoto"]},
   {name:"Gorongosa",c:"Moçambique",lat:-18.5,lng:34.5,cat:["safari"],
-   photo:"https://images.unsplash.com/photo-1764614131376-a4fac1025d5f?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Makalali_Game_Reserve_%28ZA%29%2C_L%C3%B6we_--_2024_--_1341.jpg/500px-Makalali_Game_Reserve_%28ZA%29%2C_L%C3%B6we_--_2024_--_1341.jpg",
    desc:"A maior recuperação ecológica da história — de guerra devastada a paraíso selvagem em 20 anos.",tags:["Safari","Recuperação","Inspirador"]},
 
   {name:"Tsingy de Bemaraha",c:"Madagascar",lat:-18.9,lng:44.8,cat:["unico","paisagem"],
-   photo:"https://images.unsplash.com/photo-1528161498624-89b0174b714d?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Tsingy_de_Bemaraha_Strict_Nature_Reserve.jpg/500px-Tsingy_de_Bemaraha_Strict_Nature_Reserve.jpg",
    desc:"Florestas de agulhas de calcária com 100m de altura (UNESCO). Único no planeta.",tags:["UNESCO","Geologia","Único"]},
   {name:"Avenue des Baobabs",c:"Madagascar",lat:-20.25,lng:44.4,cat:["unico","paisagem"],
-   photo:"https://images.unsplash.com/photo-1564198729838-cb82ee0c733c?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Adansonia_grandidieri_Pat_Hooper.jpg/500px-Adansonia_grandidieri_Pat_Hooper.jpg",
    desc:"Avenida de baobás seculares ao pôr do sol — a foto mais icônica de Madagascar.",tags:["Fotografia","Baobás","Pôr do Sol"]},
   {name:"Ranomafana",c:"Madagascar",lat:-21.2,lng:47.4,cat:["unico"],
-   photo:"https://images.unsplash.com/photo-1531145799947-a218be13a7ae?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Red-bellied_Lemur_-_Ranomafana_-Madagascar_S4E8245_%2815286204795%29.jpg/500px-Red-bellied_Lemur_-_Ranomafana_-Madagascar_S4E8245_%2815286204795%29.jpg",
    desc:"Floresta nebulosa com 12 espécies de lêmures. Biodiversidade que não existe em lugar nenhum.",tags:["Lêmures","Endêmico","Floresta"]},
 
   {name:"Lago Malawi",c:"Malawi",lat:-12.0,lng:34.5,cat:["mar","unico"],
-   photo:"https://images.unsplash.com/photo-1756572798557-1d196dcf8b2b?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Cape_McLear%2C_Malawi_%282498445835%29.jpg/500px-Cape_McLear%2C_Malawi_%282498445835%29.jpg",
    desc:"Mar interior com 800+ espécies endêmicas de peixe. Snorkeling como aquário natural gigante.",tags:["Lago","Snorkeling","UNESCO"]},
   {name:"Liwonde NP",c:"Malawi",lat:-15.0,lng:35.3,cat:["safari"],
-   photo:"https://images.unsplash.com/photo-1543055131-ac87bf2f6ac1?auto=format&fit=crop&w=400&h=200&q=80",
+   photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Portrait_Hippopotamus_in_the_water.jpg/500px-Portrait_Hippopotamus_in_the_water.jpg",
    desc:"Safari de barco no Rio Shire entre elefantes que entram na água e hipopótamos.",tags:["Barco","Elefantes","Íntimo"]},
 ];
 
@@ -186,16 +190,16 @@ function makeIcon(s){
   const html=`<div class="mwrap" style="--mc:${ci.color}">
     <div class="mthumb">
       <img src="${s.photo}" alt="${s.name}" loading="lazy"
-        onerror="this.style.display='none';this.nextElementSibling.style.cssText='display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:18px'">
-      <div style="display:none">${ci.flag}</div>
+        onerror="this.style.display='none';this.nextElementSibling.style.cssText='display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:${ci.color}33'">
+      <div style="display:none"></div>
     </div>
-    <div class="mflag">${ci.flag}</div>
+    <div class="mflag"><img src="https://flagcdn.com/w40/${ci.code}.png" style="width:100%;height:100%;object-fit:cover;display:block" alt=""></div>
     <div class="mcard" data-q="${s.name} ${s.c}" onclick="window.open('https://www.google.com/search?tbm=isch&q='+encodeURIComponent(this.dataset.q),'_blank')" title="Clique para ver fotos no Google">
       <img class="mcimg" src="${s.photo}" alt="${s.name}" loading="lazy"
         onerror="this.style.display='none';document.getElementById('${fbId}').style.display='flex'">
-      <div class="mcfb" id="${fbId}" style="background:${ci.color}22">${ci.flag}</div>
+      <div class="mcfb" id="${fbId}" style="background:${ci.color}22">${flagBig(ci.code)}</div>
       <div class="mcbody">
-        <div class="mcctry" style="color:${ci.color}">${ci.flag}</div>
+        <div class="mcctry" style="color:${ci.color}">${flagImg(ci.code,14)}</div>
         <div class="mctitle">${s.name}</div>
         <div class="mcdesc">${s.desc}</div>
         <div class="mctags">${s.tags.map(t=>`<span class="mctag">${t}</span>`).join('')}</div>
@@ -216,7 +220,7 @@ function buildSidebar(){
     div.innerHTML=`
       <div class="cg-header" onclick="document.getElementById('${id}').classList.toggle('open')">
         <div class="cdot" style="background:${ci.color}"></div>
-        <span class="cg-flag">${ci.flag}</span>
+        ${flagImg(ci.code,13)}
         <span class="cg-name">${cn}</span>
       </div>
       <div class="spot-list" id="${id}">
@@ -230,7 +234,7 @@ function buildLegend(){
   const lg=document.getElementById('legend');
   lg.innerHTML='<div class="lt">Países</div>'+
     Object.entries(CTRY).map(([cn,ci])=>
-      `<div class="li" onclick="flyToCountry('${cn}')"><div class="ldot" style="background:${ci.color}"></div>${ci.flag} ${cn}</div>`
+      `<div class="li" onclick="flyToCountry('${cn}')"><div class="ldot" style="background:${ci.color}"></div>${flagImg(ci.code,11)} ${cn}</div>`
     ).join('');
 }
 
