@@ -33,7 +33,8 @@ body{display:flex;flex-direction:column}
 .mthumb{width:50px;height:50px;border-radius:50%;overflow:hidden;border:3px solid var(--mc,#fff);box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .2s,box-shadow .2s;position:relative}
 .mthumb img{width:100%;height:100%;object-fit:cover;display:block}
 .mflag{position:absolute;bottom:1px;right:1px;width:17px;height:17px;border-radius:50%;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;font-size:10px;pointer-events:none}
-.mcard{position:absolute;bottom:58px;left:50%;transform:translateX(-50%) scale(.85) translateY(8px);width:285px;background:#161b22;border:1px solid #30363d;border-radius:12px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 32px rgba(0,0,0,.85);transform-origin:50% 100%}
+.mcard{position:absolute;bottom:58px;left:50%;transform:translateX(-50%) scale(.85) translateY(8px);width:285px;background:#161b22;border:1px solid #30363d;border-radius:12px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 32px rgba(0,0,0,.85);transform-origin:50% 100%;cursor:pointer}
+.mcard:hover{border-color:#58a6ff}
 .mwrap:hover .mcard,.mwrap.open .mcard{opacity:1;transform:translateX(-50%) scale(1) translateY(0);pointer-events:auto}
 .mwrap:hover .mthumb,.mwrap.open .mthumb{transform:scale(1.15);box-shadow:0 5px 18px rgba(0,0,0,.6)}
 .mcimg{width:100%;height:148px;object-fit:cover;display:block}
@@ -189,12 +190,12 @@ function makeIcon(s){
       <div style="display:none">${ci.flag}</div>
     </div>
     <div class="mflag">${ci.flag}</div>
-    <div class="mcard">
+    <div class="mcard" data-q="${s.name} ${s.c}" onclick="window.open('https://www.google.com/search?tbm=isch&q='+encodeURIComponent(this.dataset.q),'_blank')" title="Clique para ver fotos no Google">
       <img class="mcimg" src="${s.photo}" alt="${s.name}" loading="lazy"
         onerror="this.style.display='none';document.getElementById('${fbId}').style.display='flex'">
       <div class="mcfb" id="${fbId}" style="background:${ci.color}22">${ci.flag}</div>
       <div class="mcbody">
-        <div class="mcctry" style="color:${ci.color}">${ci.flag} ${s.c}</div>
+        <div class="mcctry" style="color:${ci.color}">${ci.flag}</div>
         <div class="mctitle">${s.name}</div>
         <div class="mcdesc">${s.desc}</div>
         <div class="mctags">${s.tags.map(t=>`<span class="mctag">${t}</span>`).join('')}</div>
