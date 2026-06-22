@@ -28,21 +28,22 @@ body{display:flex;flex-direction:column}
 #map-wrap{flex:1;position:relative}
 #map{width:100%;height:100%}
 #err{display:none;position:absolute;inset:0;align-items:center;justify-content:center;background:#0d1117;color:#f85149;text-align:center;padding:20px;font-size:.88rem;line-height:1.7}
-.custom-marker{background:none!important;border:none!important}
-.mpin{width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.5);cursor:pointer}
-.mpin span{transform:rotate(45deg);font-size:15px;line-height:1}
-.leaflet-popup-content-wrapper{background:#161b22!important;border:1px solid #30363d!important;border-radius:12px!important;box-shadow:0 8px 32px rgba(0,0,0,.7)!important;padding:0!important;overflow:hidden;min-width:290px}
-.leaflet-popup-content{margin:0!important;min-width:290px}
-.leaflet-popup-tip{background:#161b22!important}
-.leaflet-popup-close-button{color:#8b949e!important;right:8px!important;top:8px!important;z-index:10;font-size:16px!important;padding:0!important}
-.pimg{width:100%;height:155px;object-fit:cover;display:block}
-.pfb{width:100%;height:155px;align-items:center;justify-content:center;font-size:3rem;display:none}
-.pbody{padding:11px 14px}
-.pctry{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
-.ptitle{font-size:.97rem;font-weight:700;color:#e6edf3;margin-bottom:5px}
-.pdesc{font-size:.77rem;color:#8b949e;line-height:1.5;margin-bottom:8px}
-.ptags{display:flex;gap:5px;flex-wrap:wrap}
-.ptag{font-size:.66rem;padding:2px 8px;border-radius:20px;background:#21262d;color:#8b949e;border:1px solid #30363d}
+.map-mc{background:none!important;border:none!important;overflow:visible!important}
+.mwrap{position:relative;width:50px;height:50px;cursor:pointer}
+.mthumb{width:50px;height:50px;border-radius:50%;overflow:hidden;border:3px solid var(--mc,#fff);box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .2s,box-shadow .2s;position:relative}
+.mthumb img{width:100%;height:100%;object-fit:cover;display:block}
+.mflag{position:absolute;bottom:1px;right:1px;width:17px;height:17px;border-radius:50%;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;font-size:10px;pointer-events:none}
+.mcard{position:absolute;bottom:58px;left:50%;transform:translateX(-50%) scale(.85) translateY(8px);width:285px;background:#161b22;border:1px solid #30363d;border-radius:12px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 32px rgba(0,0,0,.85);transform-origin:50% 100%}
+.mwrap:hover .mcard,.mwrap.open .mcard{opacity:1;transform:translateX(-50%) scale(1) translateY(0);pointer-events:auto}
+.mwrap:hover .mthumb,.mwrap.open .mthumb{transform:scale(1.15);box-shadow:0 5px 18px rgba(0,0,0,.6)}
+.mcimg{width:100%;height:148px;object-fit:cover;display:block}
+.mcfb{width:100%;height:148px;display:none;align-items:center;justify-content:center;font-size:2.5rem}
+.mcbody{padding:10px 13px}
+.mcctry{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.mctitle{font-size:.95rem;font-weight:700;color:#e6edf3;margin-bottom:5px}
+.mcdesc{font-size:.75rem;color:#8b949e;line-height:1.5;margin-bottom:7px}
+.mctags{display:flex;gap:4px;flex-wrap:wrap}
+.mctag{font-size:.64rem;padding:2px 7px;border-radius:20px;background:#21262d;color:#8b949e;border:1px solid #30363d}
 #legend{position:absolute;bottom:18px;right:14px;background:#161b22dd;border:1px solid #30363d;border-radius:10px;padding:9px 13px;z-index:1000;font-size:.72rem;backdrop-filter:blur(4px)}
 #legend .lt{font-size:.68rem;color:#8b949e;margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 #legend .li{display:flex;align-items:center;gap:6px;padding:2px 0;color:#8b949e;cursor:pointer;border-radius:4px;transition:color .15s}
@@ -53,7 +54,7 @@ body{display:flex;flex-direction:column}
 <body>
 <div id="topbar">
   <h1>🌍 África Meridional</h1>
-  <p>24 destinos imperdíveis · Clique nos marcadores ou na lista</p>
+  <p>24 destinos imperdíveis · Passe o mouse nos marcadores ou clique na lista</p>
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">
     <button class="filter-btn active" onclick="filterSpots('all',this)">Todos</button>
     <button class="filter-btn" onclick="filterSpots('safari',this)">🦁 Safari</button>
@@ -178,27 +179,29 @@ const countryCenter={
   "Madagascar":[-20,47],"Malawi":[-13,34]
 };
 
-function makeIcon(c){
-  const ci=CTRY[c];
-  return L.divIcon({
-    className:'custom-marker',
-    html:`<div class="mpin" style="background:${ci.color}"><span>${ci.flag}</span></div>`,
-    iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-38]
-  });
-}
-
-function makePopup(s){
+function makeIcon(s){
   const ci=CTRY[s.c];
-  const fbId='fb_'+s.name.replace(/\W/g,'_');
-  return `<img class="pimg" src="${s.photo}" alt="${s.name}" loading="lazy"
-    onerror="this.style.display='none';document.getElementById('${fbId}').style.display='flex'">
-  <div class="pfb" id="${fbId}" style="background:${ci.color}22">${ci.flag}</div>
-  <div class="pbody">
-    <div class="pctry" style="color:${ci.color}">${ci.flag} ${s.c}</div>
-    <div class="ptitle">${s.name}</div>
-    <div class="pdesc">${s.desc}</div>
-    <div class="ptags">${s.tags.map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+  const fbId='mfb_'+s.name.replace(/\W/g,'_');
+  const html=`<div class="mwrap" style="--mc:${ci.color}">
+    <div class="mthumb">
+      <img src="${s.photo}" alt="${s.name}" loading="lazy"
+        onerror="this.style.display='none';this.nextElementSibling.style.cssText='display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:18px'">
+      <div style="display:none">${ci.flag}</div>
+    </div>
+    <div class="mflag">${ci.flag}</div>
+    <div class="mcard">
+      <img class="mcimg" src="${s.photo}" alt="${s.name}" loading="lazy"
+        onerror="this.style.display='none';document.getElementById('${fbId}').style.display='flex'">
+      <div class="mcfb" id="${fbId}" style="background:${ci.color}22">${ci.flag}</div>
+      <div class="mcbody">
+        <div class="mcctry" style="color:${ci.color}">${ci.flag} ${s.c}</div>
+        <div class="mctitle">${s.name}</div>
+        <div class="mcdesc">${s.desc}</div>
+        <div class="mctags">${s.tags.map(t=>`<span class="mctag">${t}</span>`).join('')}</div>
+      </div>
+    </div>
   </div>`;
+  return L.divIcon({className:'map-mc',html,iconSize:[50,50],iconAnchor:[25,50]});
 }
 
 function buildSidebar(){
@@ -233,9 +236,13 @@ function buildLegend(){
 function buildMarkers(){
   allMarkers=[];
   SPOTS.forEach(s=>{
-    const m=L.marker([s.lat,s.lng],{icon:makeIcon(s.c)})
-      .addTo(map)
-      .bindPopup(makePopup(s),{maxWidth:310,minWidth:290});
+    const m=L.marker([s.lat,s.lng],{icon:makeIcon(s)}).addTo(map);
+    m.on('mouseover',function(){
+      const el=this.getElement();if(el)el.style.zIndex='10000';
+    });
+    m.on('mouseout',function(){
+      const el=this.getElement();if(el)el.style.zIndex='';
+    });
     allMarkers.push({marker:m,spot:s});
   });
 }
@@ -245,16 +252,12 @@ window.filterSpots=function(cat,btn){
   btn.classList.add('active');
   allMarkers.forEach(({marker,spot})=>{
     if(cat==='all'||spot.cat.includes(cat))map.addLayer(marker);
-    else{map.removeLayer(marker);marker.closePopup();}
+    else{map.removeLayer(marker);}
   });
 };
 
 window.flyTo=function(lat,lng,name){
   map.flyTo([lat,lng],10,{duration:1.4});
-  setTimeout(()=>{
-    const m=allMarkers.find(x=>x.spot.name===name);
-    if(m)m.marker.openPopup();
-  },1600);
 };
 
 window.flyToCountry=function(cn){
