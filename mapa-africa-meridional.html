@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>África Meridional — 24 Destinos Imperdíveis</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;overflow:hidden}
+body{display:flex;flex-direction:column}
+#topbar{background:#161b22;border-bottom:1px solid #30363d;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap}
+#topbar h1{font-size:.95rem;font-weight:700;white-space:nowrap}
+#topbar p{font-size:.75rem;color:#8b949e}
+.filter-btn{padding:5px 12px;border-radius:20px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer;font-size:.74rem;transition:all .15s}
+.filter-btn.active,.filter-btn:hover{background:#2d6a4f;color:#fff;border-color:#2d6a4f}
+#wrap{display:flex;flex:1;overflow:hidden}
+#sidebar{width:230px;background:#161b22;border-right:1px solid #30363d;overflow-y:auto;flex-shrink:0}
+.cg-header{padding:9px 13px;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .15s;position:sticky;top:0;background:#161b22;z-index:1;border-bottom:1px solid #21262d}
+.cg-header:hover{background:#21262d}
+.cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cg-name{font-size:.8rem;font-weight:600}
+.cg-flag{font-size:1.05rem}
+.spot-list{display:none}
+.spot-list.open{display:block}
+.si{padding:6px 12px 6px 36px;font-size:.74rem;color:#8b949e;cursor:pointer;border-left:2px solid transparent;transition:all .15s}
+.si:hover{color:#e6edf3;background:#21262d;border-left-color:#2d6a4f}
+#map-wrap{flex:1;position:relative}
+#map{width:100%;height:100%}
+#err{display:none;position:absolute;inset:0;align-items:center;justify-content:center;background:#0d1117;color:#f85149;text-align:center;padding:20px;font-size:.88rem;line-height:1.7}
+.custom-marker{background:none!important;border:none!important}
+.mpin{width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.5);cursor:pointer}
+.mpin span{transform:rotate(45deg);font-size:15px;line-height:1}
+.leaflet-popup-content-wrapper{background:#161b22!important;border:1px solid #30363d!important;border-radius:12px!important;box-shadow:0 8px 32px rgba(0,0,0,.7)!important;padding:0!important;overflow:hidden;min-width:290px}
+.leaflet-popup-content{margin:0!important;min-width:290px}
+.leaflet-popup-tip{background:#161b22!important}
+.leaflet-popup-close-button{color:#8b949e!important;right:8px!important;top:8px!important;z-index:10;font-size:16px!important;padding:0!important}
+.pimg{width:100%;height:155px;object-fit:cover;display:block}
+.pfb{width:100%;height:155px;align-items:center;justify-content:center;font-size:3rem;display:none}
+.pbody{padding:11px 14px}
+.pctry{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.ptitle{font-size:.97rem;font-weight:700;color:#e6edf3;margin-bottom:5px}
+.pdesc{font-size:.77rem;color:#8b949e;line-height:1.5;margin-bottom:8px}
+.ptags{display:flex;gap:5px;flex-wrap:wrap}
+.ptag{font-size:.66rem;padding:2px 8px;border-radius:20px;background:#21262d;color:#8b949e;border:1px solid #30363d}
+#legend{position:absolute;bottom:18px;right:14px;background:#161b22dd;border:1px solid #30363d;border-radius:10px;padding:9px 13px;z-index:1000;font-size:.72rem;backdrop-filter:blur(4px)}
+#legend .lt{font-size:.68rem;color:#8b949e;margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+#legend .li{display:flex;align-items:center;gap:6px;padding:2px 0;color:#8b949e;cursor:pointer;border-radius:4px;transition:color .15s}
+#legend .li:hover{color:#e6edf3}
+#legend .ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <h1>🌍 África Meridional</h1>
+  <p>24 destinos imperdíveis · Clique nos marcadores ou na lista</p>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">
+    <button class="filter-btn active" onclick="filterSpots('all',this)">Todos</button>
+    <button class="filter-btn" onclick="filterSpots('safari',this)">🦁 Safari</button>
+    <button class="filter-btn" onclick="filterSpots('mar',this)">🌊 Costa</button>
+    <button class="filter-btn" onclick="filterSpots('paisagem',this)">🏔️ Paisagem</button>
+    <button class="filter-btn" onclick="filterSpots('unico',this)">✨ Únicos</button>
+  </div>
+</div>
+<div id="wrap">
+  <div id="sidebar"></div>
+  <div id="map-wrap">
+    <div id="err">Não foi possível carregar o mapa.<br>Abra este arquivo com conexão à internet.</div>
+    <div id="map"></div>
+    <div id="legend"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+  onerror="document.getElementById('err').style.display='flex'"></script>
+<script>
+const CTRY={
+  "Namíbia":      {flag:"🇳🇦",color:"#E07B39"},
+  "Botswana":     {flag:"🇧🇼",color:"#4A90D9"},
+  "Zimbabwe":     {flag:"🇿🇼",color:"#2E8B57"},
+  "Zâmbia":       {flag:"🇿🇲",color:"#C0852A"},
+  "África do Sul":{flag:"🇿🇦",color:"#3aaa5e"},
+  "Moçambique":   {flag:"🇲🇿",color:"#20B2AA"},
+  "Madagascar":   {flag:"🇲🇬",color:"#9B59B6"},
+  "Malawi":       {flag:"🇲🇼",color:"#3498DB"},
+};
+
+const SPOTS=[
+  {name:"Sossusvlei",c:"Namíbia",lat:-24.74,lng:15.34,cat:["paisagem","unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?sossusvlei,red,dunes,namibia",
+   desc:"Dunas de areia vermelha de até 325m — as mais altas do mundo. Ao nascer do sol, o deserto vira ouro.",tags:["Dunas","Deserto","Fotografia"]},
+  {name:"Etosha Pan",c:"Namíbia",lat:-18.86,lng:16.33,cat:["safari"],
+   photo:"https://source.unsplash.com/featured/400x200/?etosha,elephants,namibia,safari",
+   desc:"Salina imensa com aguadas que atraem elefantes, rinocerontes e leões. Perfeita para auto-drive.",tags:["Big 5","Auto-drive","Aguadas"]},
+  {name:"Fish River Canyon",c:"Namíbia",lat:-27.58,lng:17.59,cat:["paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?canyon,namibia,arid,gorge",
+   desc:"2º maior cânion do mundo — 550m de profundidade, 160km de comprimento.",tags:["Cânion","Trekking","Geologia"]},
+  {name:"Skeleton Coast",c:"Namíbia",lat:-21.0,lng:13.5,cat:["unico","paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?skeleton+coast,fog,atlantic,namibia",
+   desc:"Costa brutal com nevoeiros atlânticos, ossos de baleias e focas. Extremamente remota.",tags:["Costa","Remoto","Névoa"]},
+
+  {name:"Delta do Okavango",c:"Botswana",lat:-19.28,lng:22.92,cat:["safari","unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?okavango,delta,elephants,water",
+   desc:"Único delta interior do mundo — 15.000 km² de canais e vida selvagem. Safari em mokoro.",tags:["UNESCO","Mokoro","Big 5"]},
+  {name:"Chobe",c:"Botswana",lat:-17.8,lng:24.9,cat:["safari"],
+   photo:"https://source.unsplash.com/featured/400x200/?chobe,elephants,river,botswana",
+   desc:"Maior concentração de elefantes do planeta — 120.000 indivíduos. Safaris de barco no rio.",tags:["Elefantes","Barco","Rio"]},
+  {name:"Makgadikgadi",c:"Botswana",lat:-20.8,lng:25.0,cat:["unico","paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?salt+pan,botswana,reflection,sky",
+   desc:"Salinas eternas onde o céu se reflete criando o maior espelho natural da Terra.",tags:["Salinas","Reflexo","Zebras"]},
+
+  {name:"Cataratas Vitória",c:"Zimbabwe",lat:-17.92,lng:25.86,cat:["unico","paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?victoria+falls,waterfall,zimbabwe",
+   desc:"'A fumaça que troveja' — 1,7 km de largura e 108m de queda. Uma das 7 Maravilhas Naturais.",tags:["7 Maravilhas","Cachoeira","Épico"]},
+  {name:"Mana Pools",c:"Zimbabwe",lat:-15.7,lng:29.4,cat:["safari","unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?africa+river,baobab,hippo,wildlife",
+   desc:"Único parque onde walking safari SEM guia é permitido. Leopardos e hipopótamos no Zambeze.",tags:["Walking Safari","UNESCO","Único"]},
+  {name:"Matobo Hills",c:"Zimbabwe",lat:-20.5,lng:28.5,cat:["paisagem","unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?granite,boulders,africa,balancing",
+   desc:"Labirinto de granito com arte rupestre San de 2.000 anos e maior densidade de águias do mundo.",tags:["Granito","Arte Rupestre","Rinocerontes"]},
+
+  {name:"South Luangwa",c:"Zâmbia",lat:-13.0,lng:31.5,cat:["safari","unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?leopard,africa,night,safari",
+   desc:"Berço do walking safari moderno — maior densidade de leopardos da África. Noites inesquecíveis.",tags:["Walking Safari","Leopardos","Pioneiro"]},
+  {name:"Lower Zambezi",c:"Zâmbia",lat:-15.5,lng:29.2,cat:["safari"],
+   photo:"https://source.unsplash.com/featured/400x200/?zambezi,river,canoe,africa",
+   desc:"Safari em canoa entre hipopótamos e crocodilos com elefantes na margem do Zambeze.",tags:["Canoa","Hipopótamos","Rio"]},
+
+  {name:"Kruger NP",c:"África do Sul",lat:-23.9,lng:31.5,cat:["safari"],
+   photo:"https://source.unsplash.com/featured/400x200/?kruger,lion,big5,south+africa",
+   desc:"O safari mais famoso do mundo — Big 5 garantido, infraestrutura excelente. Ideal para quem começa.",tags:["Big 5","Auto-drive","Acessível"]},
+  {name:"Cape Town",c:"África do Sul",lat:-33.92,lng:18.42,cat:["paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?cape+town,table+mountain,south+africa",
+   desc:"Table Mountain, praias de tirar o fôlego e winelands. Uma das cidades mais fotogênicas do mundo.",tags:["Cidade","Montanha","Vinhos"]},
+  {name:"Drakensberg",c:"África do Sul",lat:-29.0,lng:29.5,cat:["paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?drakensberg,mountains,escarpment",
+   desc:"'Barreira de Lanças' — 3.400m de altitude com a maior coleção de arte rupestre San do mundo.",tags:["Montanhas","Arte San","Trekking"]},
+  {name:"Garden Route",c:"África do Sul",lat:-33.9,lng:22.5,cat:["mar","paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?south+africa,coast,green,cliffs",
+   desc:"300km de costa dramática, florestas milenares, lagunas e avistamento de baleias.",tags:["Costa","Baleias","Drive"]},
+
+  {name:"Bazaruto",c:"Moçambique",lat:-21.7,lng:35.5,cat:["mar","unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?coral+reef,turquoise,tropical,island",
+   desc:"Ilhas com areias brancas e águas turquesa. Dugongos, raias-manta e mergulho world-class.",tags:["Mergulho","Dugongos","Paraíso"]},
+  {name:"Ilha de Moçambique",c:"Moçambique",lat:-15.04,lng:40.73,cat:["unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?mozambique,historical,dhow,ocean",
+   desc:"Cidade UNESCO com arquitetura árabe, swahili e portuguesa em menos de 3km². Museu vivo.",tags:["UNESCO","Cultura","Histórico"]},
+  {name:"Quirimbas",c:"Moçambique",lat:-11.5,lng:40.5,cat:["mar"],
+   photo:"https://source.unsplash.com/featured/400x200/?whale+shark,mozambique,ocean,diving",
+   desc:"Recife de coral remoto com tubarões-baleia e manta rays. O Maldivas secreto da África.",tags:["Coral","Tubarão-baleia","Remoto"]},
+  {name:"Gorongosa",c:"Moçambique",lat:-18.5,lng:34.5,cat:["safari"],
+   photo:"https://source.unsplash.com/featured/400x200/?african+savanna,wildlife,recovery",
+   desc:"A maior recuperação ecológica da história — de guerra devastada a paraíso selvagem em 20 anos.",tags:["Safari","Recuperação","Inspirador"]},
+
+  {name:"Tsingy de Bemaraha",c:"Madagascar",lat:-18.9,lng:44.8,cat:["unico","paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?tsingy,madagascar,limestone,spikes",
+   desc:"Florestas de agulhas de calcária com 100m de altura (UNESCO). Único no planeta.",tags:["UNESCO","Geologia","Único"]},
+  {name:"Avenue des Baobabs",c:"Madagascar",lat:-20.25,lng:44.4,cat:["unico","paisagem"],
+   photo:"https://source.unsplash.com/featured/400x200/?baobab,sunset,madagascar,tree",
+   desc:"Avenida de baobás seculares ao pôr do sol — a foto mais icônica de Madagascar.",tags:["Fotografia","Baobás","Pôr do Sol"]},
+  {name:"Ranomafana",c:"Madagascar",lat:-21.2,lng:47.4,cat:["unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?lemur,madagascar,forest,primate",
+   desc:"Floresta nebulosa com 12 espécies de lêmures. Biodiversidade que não existe em lugar nenhum.",tags:["Lêmures","Endêmico","Floresta"]},
+
+  {name:"Lago Malawi",c:"Malawi",lat:-12.0,lng:34.5,cat:["mar","unico"],
+   photo:"https://source.unsplash.com/featured/400x200/?lake+malawi,clear+water,africa,fish",
+   desc:"Mar interior com 800+ espécies endêmicas de peixe. Snorkeling como aquário natural gigante.",tags:["Lago","Snorkeling","UNESCO"]},
+  {name:"Liwonde NP",c:"Malawi",lat:-15.0,lng:35.3,cat:["safari"],
+   photo:"https://source.unsplash.com/featured/400x200/?boat+safari,elephant,river,africa",
+   desc:"Safari de barco no Rio Shire entre elefantes que entram na água e hipopótamos.",tags:["Barco","Elefantes","Íntimo"]},
+];
+
+let map, allMarkers=[];
+
+const countryCenter={
+  "Namíbia":[-22,17],"Botswana":[-21,24],"Zimbabwe":[-19,29],
+  "Zâmbia":[-14,28],"África do Sul":[-29,25],"Moçambique":[-18,35],
+  "Madagascar":[-20,47],"Malawi":[-13,34]
+};
+
+function makeIcon(c){
+  const ci=CTRY[c];
+  return L.divIcon({
+    className:'custom-marker',
+    html:`<div class="mpin" style="background:${ci.color}"><span>${ci.flag}</span></div>`,
+    iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-38]
+  });
+}
+
+function makePopup(s){
+  const ci=CTRY[s.c];
+  const fbId='fb_'+s.name.replace(/\W/g,'_');
+  return `<img class="pimg" src="${s.photo}" alt="${s.name}" loading="lazy"
+    onerror="this.style.display='none';document.getElementById('${fbId}').style.display='flex'">
+  <div class="pfb" id="${fbId}" style="background:${ci.color}22">${ci.flag}</div>
+  <div class="pbody">
+    <div class="pctry" style="color:${ci.color}">${ci.flag} ${s.c}</div>
+    <div class="ptitle">${s.name}</div>
+    <div class="pdesc">${s.desc}</div>
+    <div class="ptags">${s.tags.map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+  </div>`;
+}
+
+function buildSidebar(){
+  const sb=document.getElementById('sidebar');
+  const groups={};
+  SPOTS.forEach(s=>{if(!groups[s.c])groups[s.c]=[];groups[s.c].push(s);});
+  Object.entries(groups).forEach(([cn,cspots])=>{
+    const ci=CTRY[cn];
+    const id='cg_'+cn.replace(/\W/g,'_');
+    const div=document.createElement('div');
+    div.innerHTML=`
+      <div class="cg-header" onclick="document.getElementById('${id}').classList.toggle('open')">
+        <div class="cdot" style="background:${ci.color}"></div>
+        <span class="cg-flag">${ci.flag}</span>
+        <span class="cg-name">${cn}</span>
+      </div>
+      <div class="spot-list" id="${id}">
+        ${cspots.map(s=>`<div class="si" onclick="flyTo(${s.lat},${s.lng},'${s.name.replace(/'/g,"\\'")}')">▸ ${s.name}</div>`).join('')}
+      </div>`;
+    sb.appendChild(div);
+  });
+}
+
+function buildLegend(){
+  const lg=document.getElementById('legend');
+  lg.innerHTML='<div class="lt">Países</div>'+
+    Object.entries(CTRY).map(([cn,ci])=>
+      `<div class="li" onclick="flyToCountry('${cn}')"><div class="ldot" style="background:${ci.color}"></div>${ci.flag} ${cn}</div>`
+    ).join('');
+}
+
+function buildMarkers(){
+  allMarkers=[];
+  SPOTS.forEach(s=>{
+    const m=L.marker([s.lat,s.lng],{icon:makeIcon(s.c)})
+      .addTo(map)
+      .bindPopup(makePopup(s),{maxWidth:310,minWidth:290});
+    allMarkers.push({marker:m,spot:s});
+  });
+}
+
+window.filterSpots=function(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  allMarkers.forEach(({marker,spot})=>{
+    if(cat==='all'||spot.cat.includes(cat))map.addLayer(marker);
+    else{map.removeLayer(marker);marker.closePopup();}
+  });
+};
+
+window.flyTo=function(lat,lng,name){
+  map.flyTo([lat,lng],10,{duration:1.4});
+  setTimeout(()=>{
+    const m=allMarkers.find(x=>x.spot.name===name);
+    if(m)m.marker.openPopup();
+  },1600);
+};
+
+window.flyToCountry=function(cn){
+  const c=countryCenter[cn];
+  if(c)map.flyTo(c,7,{duration:1.2});
+};
+
+function initMap(){
+  if(typeof L==='undefined'){document.getElementById('err').style.display='flex';return;}
+  map=L.map('map',{center:[-18,32],zoom:5});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© <a href="https://www.openstreetmap.org">OpenStreetMap</a> © <a href="https://carto.com">CARTO</a>',
+    subdomains:'abcd',maxZoom:19
+  }).addTo(map);
+  buildSidebar();
+  buildMarkers();
+  buildLegend();
+}
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMap);
+else initMap();
+</script>
+</body>
+</html>
