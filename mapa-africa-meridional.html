@@ -69,6 +69,7 @@ body{display:flex;flex-direction:column}
 .rleg-row{display:flex;align-items:center;gap:8px;padding:2px 0;color:#c9d1d9}
 .rleg-ln{width:26px;height:3px;flex-shrink:0;border-radius:2px}
 #routes-btn.active{background:#1d3a6e!important;color:#93c5fd!important;border-color:#3b82f6!important}
+.rlabel{background:rgba(13,17,23,.9);border:1px solid rgba(48,54,61,.95);border-radius:4px;padding:2px 6px;font-size:.6rem;font-weight:700;color:#e6edf3;white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);display:inline-block;line-height:1.45;box-shadow:0 1px 5px rgba(0,0,0,.6);text-align:center}
 </style>
 </head>
 <body>
@@ -217,28 +218,29 @@ const HUBS={
   tna:{n:"Antananarivo",lat:-18.91,lng:47.54},
 };
 const ROUTES=[
-  {a:"jnb",b:"cpt",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–150",c:"FlySafair · Kulula"},{i:"🚌",d:"Ônibus",t:"14h",p:"$35",c:"Intercape"}]},
-  {a:"jnb",b:"wdh",m:[{i:"✈️",d:"Voo",t:"2h",p:"$90–200",c:"Airlink · FlyNamibia"},{i:"🚌",d:"Ônibus",t:"18h",p:"$35",c:"Intercape"}]},
-  {a:"jnb",b:"mpq",m:[{i:"✈️",d:"Voo",t:"1h",p:"$50–100",c:"LAM · Airlink"},{i:"🚌",d:"Ônibus",t:"5h",p:"$15–30",c:"Intercape"}]},
-  {a:"jnb",b:"vic",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–180",c:"Airlink · Fastjet"},{i:"🚌",d:"Ônibus",t:"11h",p:"$40–55",c:"Intercape"}]},
-  {a:"jnb",b:"mun",m:[{i:"✈️",d:"Voo",t:"2h",p:"$120–250",c:"Airlink"}]},
-  {a:"jnb",b:"ksn",m:[{i:"✈️",d:"Voo",t:"2h",p:"$130–260",c:"Airlink"}]},
-  {a:"jnb",b:"lun",m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$150–300",c:"Airlink"}]},
-  {a:"jnb",b:"lil",m:[{i:"✈️",d:"Voo",t:"3h",p:"$180–380",c:"Malawian Airlines"}]},
-  {a:"jnb",b:"hre",m:[{i:"✈️",d:"Voo",t:"2h",p:"$100–200",c:"Airlink · Fastjet"}]},
-  {a:"jnb",b:"bew",m:[{i:"✈️",d:"Voo",t:"2h",p:"$120–250",c:"LAM · Airlink"}]},
-  {a:"jnb",b:"tna",m:[{i:"✈️",d:"Voo",t:"4h",p:"$300–650",c:"Air Madagascar"}]},
-  {a:"wdh",b:"mun",m:[{i:"🚗",d:"Carro",t:"8–9h",p:"—",c:"Trans-Kalahari Hwy"}]},
-  {a:"mun",b:"ksn",m:[{i:"🚗",d:"Carro",t:"4h",p:"—",c:"A3 road"}]},
-  {a:"ksn",b:"vic",m:[{i:"🚗",d:"Carro",t:"1h",p:"—",c:"—"},{i:"⛴",d:"Ferry Kazungula",t:"30min",p:"$2–5",c:"BWA ↔ ZAM"}]},
-  {a:"vic",b:"hre",m:[{i:"🚗",d:"Carro",t:"7h",p:"—",c:"A5 via Hwange"},{i:"✈️",d:"Voo",t:"1h",p:"$80–150",c:"Fastjet · Airlink"}]},
-  {a:"vic",b:"lun",m:[{i:"🚌",d:"Ônibus",t:"6h",p:"$10–20",c:"via Livingstone"},{i:"✈️",d:"Voo",t:"1h",p:"$80–150",c:"Proflight · Airlink"}]},
-  {a:"hre",b:"lun",m:[{i:"🚌",d:"Ônibus",t:"8h",p:"$15–25",c:"Fastjet Bus"},{i:"✈️",d:"Voo",t:"1h",p:"$100–180",c:"Proflight · Fastjet"}]},
-  {a:"lun",b:"lil",m:[{i:"🚌",d:"Ônibus",t:"10–12h",p:"$15–25",c:"AXA · Mazhandu"},{i:"✈️",d:"Voo",t:"1.5h",p:"$100–200",c:"Proflight · Malawian"}]},
-  {a:"lil",b:"bew",m:[{i:"🚌",d:"Ônibus",t:"12h",p:"$15–25",c:"via Tete"},{i:"✈️",d:"Voo",t:"1.5h",p:"$120–200",c:"LAM"}]},
-  {a:"lil",b:"mpq",m:[{i:"✈️",d:"Voo",t:"2h",p:"$150–280",c:"Malawian · LAM"}]},
-  {a:"mpq",b:"bew",m:[{i:"🚌",d:"Ônibus",t:"10h",p:"$20–35",c:"EN1"},{i:"✈️",d:"Voo",t:"1.5h",p:"$100–200",c:"LAM"}]},
-  {a:"tna",b:"mpq",m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$250–420",c:"Air Madagascar"}]},
+  // lf = fração da linha onde cai o label (0.5 = centro); nl = sem label (rota curta)
+  {a:"jnb",b:"cpt",lf:.5, m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–150",c:"FlySafair · Kulula"},{i:"🚌",d:"Ônibus",t:"14h",p:"$35",c:"Intercape"}]},
+  {a:"jnb",b:"wdh",lf:.5, m:[{i:"✈️",d:"Voo",t:"2h",p:"$90–200",c:"Airlink · FlyNamibia"},{i:"🚌",d:"Ônibus",t:"18h",p:"$35",c:"Intercape"}]},
+  {a:"jnb",b:"mpq",lf:.5, m:[{i:"✈️",d:"Voo",t:"1h",p:"$50–100",c:"LAM · Airlink"},{i:"🚌",d:"Ônibus",t:"5h",p:"$15–30",c:"Intercape"}]},
+  {a:"jnb",b:"vic",lf:.75,m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–180",c:"Airlink · Fastjet"},{i:"🚌",d:"Ônibus",t:"11h",p:"$40–55",c:"Intercape"}]},
+  {a:"jnb",b:"mun",lf:.5, m:[{i:"✈️",d:"Voo",t:"2h",p:"$120–250",c:"Airlink"}]},
+  {a:"jnb",b:"ksn",lf:.22,m:[{i:"✈️",d:"Voo",t:"2h",p:"$130–260",c:"Airlink"}]},
+  {a:"jnb",b:"lun",lf:.42,m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$150–300",c:"Airlink"}]},
+  {a:"jnb",b:"lil",lf:.5, m:[{i:"✈️",d:"Voo",t:"3h",p:"$180–380",c:"Malawian Airlines"}]},
+  {a:"jnb",b:"hre",lf:.52,m:[{i:"✈️",d:"Voo",t:"2h",p:"$100–200",c:"Airlink · Fastjet"}]},
+  {a:"jnb",b:"bew",lf:.5, m:[{i:"✈️",d:"Voo",t:"2h",p:"$120–250",c:"LAM · Airlink"}]},
+  {a:"jnb",b:"tna",lf:.5, m:[{i:"✈️",d:"Voo",t:"4h",p:"$300–650",c:"Air Madagascar"}]},
+  {a:"wdh",b:"mun",lf:.5, m:[{i:"🚗",d:"Carro",t:"8–9h",p:"—",c:"Trans-Kalahari Hwy"}]},
+  {a:"mun",b:"ksn",lf:.5, m:[{i:"🚗",d:"Carro",t:"4h",p:"—",c:"A3 road"}]},
+  {a:"ksn",b:"vic",nl:true,m:[{i:"🚗",d:"Carro",t:"1h",p:"—",c:"—"},{i:"⛴",d:"Ferry Kazungula",t:"30min",p:"$2–5",c:"BWA ↔ ZAM"}]},
+  {a:"vic",b:"hre",lf:.42,m:[{i:"🚗",d:"Carro",t:"7h",p:"—",c:"A5 via Hwange"},{i:"✈️",d:"Voo",t:"1h",p:"$80–150",c:"Fastjet · Airlink"}]},
+  {a:"vic",b:"lun",lf:.58,m:[{i:"🚌",d:"Ônibus",t:"6h",p:"$10–20",c:"via Livingstone"},{i:"✈️",d:"Voo",t:"1h",p:"$80–150",c:"Proflight · Airlink"}]},
+  {a:"hre",b:"lun",lf:.5, m:[{i:"🚌",d:"Ônibus",t:"8h",p:"$15–25",c:"Fastjet Bus"},{i:"✈️",d:"Voo",t:"1h",p:"$100–180",c:"Proflight · Fastjet"}]},
+  {a:"lun",b:"lil",lf:.5, m:[{i:"🚌",d:"Ônibus",t:"10–12h",p:"$15–25",c:"AXA · Mazhandu"},{i:"✈️",d:"Voo",t:"1.5h",p:"$100–200",c:"Proflight · Malawian"}]},
+  {a:"lil",b:"bew",lf:.5, m:[{i:"🚌",d:"Ônibus",t:"12h",p:"$15–25",c:"via Tete"},{i:"✈️",d:"Voo",t:"1.5h",p:"$120–200",c:"LAM"}]},
+  {a:"lil",b:"mpq",lf:.5, m:[{i:"✈️",d:"Voo",t:"2h",p:"$150–280",c:"Malawian · LAM"}]},
+  {a:"mpq",b:"bew",lf:.5, m:[{i:"🚌",d:"Ônibus",t:"10h",p:"$20–35",c:"EN1"},{i:"✈️",d:"Voo",t:"1.5h",p:"$100–200",c:"LAM"}]},
+  {a:"tna",b:"mpq",lf:.5, m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$250–420",c:"Air Madagascar"}]},
 ];
 
 let routeLayer=null,routesVisible=false;
@@ -271,6 +273,20 @@ function buildRouteLayer(){
       {color,weight:2.5,opacity:.85,dashArray:dash})
       .bindPopup(routePopup(r),{maxWidth:340,className:'dark-popup'})
       .addTo(routeLayer);
+    if(r.nl)return;
+    const frac=r.lf||.5;
+    const lat=ha.lat+(hb.lat-ha.lat)*frac;
+    const lng=ha.lng+(hb.lng-ha.lng)*frac;
+    const air=r.m.find(x=>x.i==='✈️');
+    const gnd=r.m.find(x=>x.i!=='✈️');
+    const lines=[];
+    if(air)lines.push(`✈ ${air.t}`);
+    if(gnd)lines.push(`${gnd.i} ${gnd.t}`);
+    const html=`<span class="rlabel">${lines.join('<br>')}</span>`;
+    L.marker([lat,lng],{
+      icon:L.divIcon({className:'',html,iconSize:[0,0],iconAnchor:[0,0]}),
+      interactive:false,zIndexOffset:2000
+    }).addTo(routeLayer);
   });
 }
 
