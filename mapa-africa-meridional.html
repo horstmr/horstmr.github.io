@@ -69,7 +69,8 @@ body{display:flex;flex-direction:column}
 .rleg-row{display:flex;align-items:center;gap:8px;padding:2px 0;color:#c9d1d9}
 .rleg-ln{width:26px;height:3px;flex-shrink:0;border-radius:2px}
 #routes-btn.active{background:#1d3a6e!important;color:#93c5fd!important;border-color:#3b82f6!important}
-.rlabel{background:rgba(13,17,23,.9);border:1px solid rgba(48,54,61,.95);border-radius:4px;padding:2px 6px;font-size:.6rem;font-weight:700;color:#e6edf3;white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);display:inline-block;line-height:1.45;box-shadow:0 1px 5px rgba(0,0,0,.6);text-align:center}
+.dark-tt{background:rgba(13,17,23,.95)!important;border:1px solid #30363d!important;border-radius:5px!important;color:#e6edf3!important;font-size:.73rem!important;font-weight:600!important;box-shadow:0 3px 10px rgba(0,0,0,.65)!important;padding:5px 10px!important;line-height:1.6!important}
+.dark-tt::before{display:none!important}
 </style>
 </head>
 <body>
@@ -277,24 +278,18 @@ function buildRouteLayer(){
     const hasGnd=r.m.some(x=>x.i!=='✈️');
     const color=hasAir&&hasGnd?'#a78bfa':hasAir?'#58a6ff':'#f59e0b';
     const dash=hasGnd&&!hasAir?null:'7,5';
-    L.polyline([[ha.lat,ha.lng],[hb.lat,hb.lng]],
-      {color,weight:2.5,opacity:.85,dashArray:dash})
+    const line=L.polyline([[ha.lat,ha.lng],[hb.lat,hb.lng]],
+      {color,weight:2.5,opacity:.75,dashArray:dash})
       .bindPopup(routePopup(r),{maxWidth:340,className:'dark-popup'})
       .addTo(routeLayer);
-    if(r.nl)return;
-    const frac=r.lf||.5;
-    const lat=ha.lat+(hb.lat-ha.lat)*frac;
-    const lng=ha.lng+(hb.lng-ha.lng)*frac;
     const air=r.m.find(x=>x.i==='✈️');
     const gnd=r.m.find(x=>x.i!=='✈️');
-    const lines=[];
-    if(air)lines.push(`✈ ${air.t}${brlLabel(air.p)}`);
-    if(gnd)lines.push(`${gnd.i} ${gnd.t}`);
-    const html=`<span class="rlabel">${lines.join('<br>')}</span>`;
-    L.marker([lat,lng],{
-      icon:L.divIcon({className:'',html,iconSize:[0,0],iconAnchor:[0,0]}),
-      interactive:false,zIndexOffset:2000
-    }).addTo(routeLayer);
+    const ttLines=[];
+    if(air)ttLines.push(`✈ ${air.t}${brlLabel(air.p)}`);
+    if(gnd)ttLines.push(`${gnd.i} ${gnd.t}`);
+    line.bindTooltip(ttLines.join('<br>'),{sticky:true,className:'dark-tt',offset:[0,-6]});
+    line.on('mouseover',function(){this.setStyle({weight:4,opacity:1});});
+    line.on('mouseout',function(){this.setStyle({weight:2.5,opacity:.75});});
   });
 }
 
