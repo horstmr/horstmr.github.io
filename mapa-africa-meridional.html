@@ -217,6 +217,11 @@ const HUBS={
   bew:{n:"Beira",lat:-19.84,lng:34.84},
   hre:{n:"Harare",lat:-17.83,lng:31.05},
   tna:{n:"Antananarivo",lat:-18.91,lng:47.54},
+  swk:{n:"Swakopmund",lat:-22.68,lng:14.53},
+  dur:{n:"Durban",lat:-29.86,lng:31.02},
+  geo:{n:"George (Garden Route)",lat:-33.96,lng:22.46},
+  vil:{n:"Vilankulos",lat:-22.01,lng:35.31},
+  pem:{n:"Pemba",lat:-12.97,lng:40.52},
 };
 const ROUTES=[
   // lf = fração da linha onde cai o label (0.5 = centro); nl = sem label (rota curta)
@@ -243,6 +248,14 @@ const ROUTES=[
   {a:"mpq",b:"bew",lf:.5, m:[{i:"🚌",d:"Ônibus",t:"10h",p:"$20–35",c:"EN1"},{i:"✈️",d:"Voo",t:"1.5h",p:"$100–200",c:"LAM"}]},
   {a:"tna",b:"mpq",lf:.5, m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$250–420",c:"Air Madagascar"}]},
   {a:"tna",b:"bew",m:[{i:"⛴",d:"Barco",t:"2–3 dias",p:"$100–200",c:"Cargueiro (esporádico)"},{i:"✈️",d:"Voo",t:"2h",p:"$250–400",c:"LAM · Air Madagascar"}]},
+  {a:"wdh",b:"swk",m:[{i:"🚗",d:"Carro",t:"4h",p:"—",c:"B2 highway"},{i:"🚌",d:"Ônibus",t:"5h",p:"$10–15",c:"Intercape"}]},
+  {a:"jnb",b:"dur",m:[{i:"✈️",d:"Voo",t:"1h",p:"$50–100",c:"FlySafair · Airlink"},{i:"🚌",d:"Ônibus",t:"8h",p:"$25–35",c:"Translux · Intercape"}]},
+  {a:"mpq",b:"dur",m:[{i:"✈️",d:"Voo",t:"1h",p:"$80–150",c:"Airlink"},{i:"🚌",d:"Ônibus",t:"9h",p:"$25–40",c:"Translux"}]},
+  {a:"cpt",b:"geo",m:[{i:"🚌",d:"Ônibus",t:"5h",p:"$15–25",c:"Intercape (N2)"},{i:"✈️",d:"Voo",t:"1h",p:"$60–120",c:"FlySafair · Airlink"}]},
+  {a:"bew",b:"vil",m:[{i:"🚌",d:"Ônibus",t:"6h",p:"$10–20",c:"EN1"},{i:"✈️",d:"Voo",t:"1h",p:"$100–180",c:"LAM"}]},
+  {a:"mpq",b:"vil",m:[{i:"🚌",d:"Ônibus",t:"8h",p:"$15–25",c:"EN1"},{i:"✈️",d:"Voo",t:"1.5h",p:"$120–200",c:"LAM"}]},
+  {a:"bew",b:"pem",m:[{i:"✈️",d:"Voo",t:"1.5h",p:"$120–200",c:"LAM"},{i:"🚌",d:"Ônibus",t:"16h",p:"$20–35",c:"EN1 via Nampula"}]},
+  {a:"lil",b:"pem",m:[{i:"✈️",d:"Voo",t:"2h",p:"$150–250",c:"LAM · Malawian"},{i:"🚌",d:"Ônibus",t:"14h",p:"$20–30",c:"via Cuamba"}]},
 ];
 
 let routeLayer=null,routesVisible=false;
