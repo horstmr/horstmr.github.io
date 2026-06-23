@@ -222,6 +222,12 @@ const HUBS={
   geo:{n:"George (Garden Route)",lat:-33.96,lng:22.46},
   vil:{n:"Vilankulos",lat:-22.01,lng:35.31},
   pem:{n:"Pemba",lat:-12.97,lng:40.52},
+  eta:{n:"Etosha (Outjo)",lat:-18.9,lng:16.0},
+  skc:{n:"Skeleton Coast",lat:-20.4,lng:14.9},
+  frc:{n:"Fish River Canyon",lat:-26.6,lng:18.1},
+  liw:{n:"Liwonde",lat:-15.0,lng:35.3},
+  slm:{n:"Lago Malawi (Nkhotakota)",lat:-12.9,lng:34.3},
+  qui:{n:"Quirimbas",lat:-11.5,lng:40.5},
 };
 const ROUTES=[
   // lf = fração da linha onde cai o label (0.5 = centro); nl = sem label (rota curta)
@@ -256,6 +262,15 @@ const ROUTES=[
   {a:"mpq",b:"vil",m:[{i:"🚌",d:"Ônibus",t:"8h",p:"$15–25",c:"EN1"},{i:"✈️",d:"Voo",t:"1.5h",p:"$120–200",c:"LAM"}]},
   {a:"bew",b:"pem",m:[{i:"✈️",d:"Voo",t:"1.5h",p:"$120–200",c:"LAM"},{i:"🚌",d:"Ônibus",t:"16h",p:"$20–35",c:"EN1 via Nampula"}]},
   {a:"lil",b:"pem",m:[{i:"✈️",d:"Voo",t:"2h",p:"$150–250",c:"LAM · Malawian"},{i:"🚌",d:"Ônibus",t:"14h",p:"$20–30",c:"via Cuamba"}]},
+  {a:"wdh",b:"eta",m:[{i:"🚗",d:"Carro",t:"4h",p:"—",c:"B1 norte via Okahandja"}]},
+  {a:"swk",b:"eta",m:[{i:"🚗",d:"Carro",t:"5h",p:"—",c:"B2 a Omaruru · C33"}]},
+  {a:"swk",b:"skc",m:[{i:"🚗",d:"Carro",t:"3h",p:"—",c:"C34 via Henties Bay"}]},
+  {a:"eta",b:"skc",m:[{i:"🚗",d:"Carro",t:"3h",p:"—",c:"C35 via Khorixas"}]},
+  {a:"wdh",b:"frc",m:[{i:"🚗",d:"Carro",t:"5h",p:"—",c:"B1 sul até Keetmanshoop"}]},
+  {a:"lil",b:"liw",m:[{i:"🚌",d:"Ônibus",t:"3h",p:"$5–10",c:"M3 sul"}]},
+  {a:"liw",b:"bew",m:[{i:"🚌",d:"Ônibus",t:"8h",p:"$15–25",c:"via Zobue · EN7"}]},
+  {a:"lil",b:"slm",m:[{i:"🚗",d:"Carro",t:"3h",p:"—",c:"M18 via Dowa"}]},
+  {a:"pem",b:"qui",m:[{i:"🚗",d:"Carro",t:"3h",p:"—",c:"EN380 norte"}]},
 ];
 
 let routeLayer=null,routesVisible=false;
