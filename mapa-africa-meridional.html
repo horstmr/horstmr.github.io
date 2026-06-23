@@ -244,6 +244,14 @@ const ROUTES=[
 ];
 
 let routeLayer=null,routesVisible=false;
+const USD_BRL=5.75;
+function brlLabel(p){
+  const m=p.match(/\$(\d+)[–\-](\d+)/);
+  if(!m)return '';
+  const v=Math.round((+m[1]+ +m[2])/2*USD_BRL/10)*10;
+  const s=v>=1000?Math.floor(v/1000)+'.'+String(v%1000).padStart(3,'0'):String(v);
+  return ` (R$${s})`;
+}
 
 function routePopup(r){
   const ha=HUBS[r.a],hb=HUBS[r.b];
@@ -280,7 +288,7 @@ function buildRouteLayer(){
     const air=r.m.find(x=>x.i==='✈️');
     const gnd=r.m.find(x=>x.i!=='✈️');
     const lines=[];
-    if(air)lines.push(`✈ ${air.t}`);
+    if(air)lines.push(`✈ ${air.t}${brlLabel(air.p)}`);
     if(gnd)lines.push(`${gnd.i} ${gnd.t}`);
     const html=`<span class="rlabel">${lines.join('<br>')}</span>`;
     L.marker([lat,lng],{
