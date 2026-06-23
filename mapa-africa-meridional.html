@@ -51,6 +51,24 @@ body{display:flex;flex-direction:column}
 #legend .li{display:flex;align-items:center;gap:6px;padding:2px 0;color:#8b949e;cursor:pointer;border-radius:4px;transition:color .15s}
 #legend .li:hover{color:#e6edf3}
 #legend .ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+/* === Rotas layer === */
+.rpop{min-width:240px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.rpop-name{font-size:.85rem;font-weight:700;color:#e6edf3;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #30363d}
+.rpop-row{display:grid;grid-template-columns:22px 44px 72px 1fr;gap:5px;align-items:center;padding:5px 0;font-size:.74rem;border-top:1px solid #21262d}
+.rpop-icon{text-align:center;font-size:.88rem}
+.rpop-t{color:#e6edf3;font-weight:700}
+.rpop-p{color:#3fb950;font-weight:600}
+.rpop-c{color:#8b949e;font-size:.69rem;line-height:1.3}
+.dark-popup .leaflet-popup-content-wrapper{background:#161b22!important;border:1px solid #30363d!important;border-radius:10px!important;color:#e6edf3!important;box-shadow:0 8px 28px rgba(0,0,0,.75)!important}
+.dark-popup .leaflet-popup-content{margin:10px 13px!important}
+.dark-popup .leaflet-popup-tip{background:#161b22!important}
+.dark-popup .leaflet-popup-close-button{color:#8b949e!important;font-size:16px!important;top:6px!important;right:8px!important}
+#rlayer-legend{position:absolute;top:56px;right:14px;background:#161b22ee;border:1px solid #30363d;border-radius:8px;padding:10px 14px;z-index:900;font-size:.72rem;backdrop-filter:blur(4px);display:none;pointer-events:none}
+#rlayer-legend.show{display:block}
+.rleg-ttl{font-size:.67rem;color:#8b949e;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.rleg-row{display:flex;align-items:center;gap:8px;padding:2px 0;color:#c9d1d9}
+.rleg-ln{width:26px;height:3px;flex-shrink:0;border-radius:2px}
+#routes-btn.active{background:#1d3a6e!important;color:#93c5fd!important;border-color:#3b82f6!important}
 </style>
 </head>
 <body>
@@ -64,6 +82,7 @@ body{display:flex;flex-direction:column}
     <button class="filter-btn" onclick="filterSpots('paisagem',this)">🏔️ Paisagem</button>
     <button class="filter-btn" onclick="filterSpots('unico',this)">✨ Únicos</button>
   </div>
+  <button id="routes-btn" class="filter-btn" onclick="toggleRoutes()" style="border-color:#3b82f688;color:#8ac0f5;margin-left:4px">✈️ Rotas &amp; Preços</button>
 </div>
 <div id="wrap">
   <div id="sidebar"></div>
@@ -71,6 +90,13 @@ body{display:flex;flex-direction:column}
     <div id="err">Não foi possível carregar o mapa.<br>Abra este arquivo com conexão à internet.</div>
     <div id="map"></div>
     <div id="legend"></div>
+    <div id="rlayer-legend">
+      <div class="rleg-ttl">Tipo de rota</div>
+      <div class="rleg-row"><div class="rleg-ln" style="background:#58a6ff;border-top:2px dashed #58a6ff;height:0"></div><span>Aéreo</span></div>
+      <div class="rleg-row"><div class="rleg-ln" style="background:#f59e0b"></div><span>Terrestre / ferry</span></div>
+      <div class="rleg-row"><div class="rleg-ln" style="background:#a78bfa;border-top:2px dashed #a78bfa;height:0"></div><span>Ambos</span></div>
+      <div style="font-size:.65rem;color:#8b949e;margin-top:7px;line-height:1.5">Clique nas linhas<br>para ver detalhes</div>
+    </div>
   </div>
 </div>
 
@@ -175,6 +201,94 @@ const SPOTS=[
    photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Portrait_Hippopotamus_in_the_water.jpg/500px-Portrait_Hippopotamus_in_the_water.jpg",
    desc:"Safari de barco no Rio Shire entre elefantes que entram na água e hipopótamos.",tags:["Barco","Elefantes","Íntimo"]},
 ];
+
+const HUBS={
+  jnb:{n:"Johannesburg",lat:-26.20,lng:28.04},
+  cpt:{n:"Cape Town",lat:-33.92,lng:18.42},
+  wdh:{n:"Windhoek",lat:-22.56,lng:17.08},
+  mun:{n:"Maun",lat:-19.98,lng:23.42},
+  ksn:{n:"Kasane / Chobe",lat:-17.80,lng:25.15},
+  vic:{n:"Vic. Falls / Livingstone",lat:-17.93,lng:25.82},
+  lun:{n:"Lusaka",lat:-15.42,lng:28.28},
+  lil:{n:"Lilongwe",lat:-13.97,lng:33.79},
+  mpq:{n:"Maputo",lat:-25.97,lng:32.57},
+  bew:{n:"Beira",lat:-19.84,lng:34.84},
+  hre:{n:"Harare",lat:-17.83,lng:31.05},
+  tna:{n:"Antananarivo",lat:-18.91,lng:47.54},
+};
+const ROUTES=[
+  {a:"jnb",b:"cpt",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–150",c:"FlySafair · Kulula"},{i:"🚌",d:"Ônibus",t:"14h",p:"$35",c:"Intercape"}]},
+  {a:"jnb",b:"wdh",m:[{i:"✈️",d:"Voo",t:"2h",p:"$90–200",c:"Airlink · FlyNamibia"},{i:"🚌",d:"Ônibus",t:"18h",p:"$35",c:"Intercape"}]},
+  {a:"jnb",b:"mpq",m:[{i:"✈️",d:"Voo",t:"1h",p:"$50–100",c:"LAM · Airlink"},{i:"🚌",d:"Ônibus",t:"5h",p:"$15–30",c:"Intercape"}]},
+  {a:"jnb",b:"vic",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–180",c:"Airlink · Fastjet"},{i:"🚌",d:"Ônibus",t:"11h",p:"$40–55",c:"Intercape"}]},
+  {a:"jnb",b:"mun",m:[{i:"✈️",d:"Voo",t:"2h",p:"$120–250",c:"Airlink"}]},
+  {a:"jnb",b:"ksn",m:[{i:"✈️",d:"Voo",t:"2h",p:"$130–260",c:"Airlink"}]},
+  {a:"jnb",b:"lun",m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$150–300",c:"Airlink"}]},
+  {a:"jnb",b:"lil",m:[{i:"✈️",d:"Voo",t:"3h",p:"$180–380",c:"Malawian Airlines"}]},
+  {a:"jnb",b:"hre",m:[{i:"✈️",d:"Voo",t:"2h",p:"$100–200",c:"Airlink · Fastjet"}]},
+  {a:"jnb",b:"bew",m:[{i:"✈️",d:"Voo",t:"2h",p:"$120–250",c:"LAM · Airlink"}]},
+  {a:"jnb",b:"tna",m:[{i:"✈️",d:"Voo",t:"4h",p:"$300–650",c:"Air Madagascar"}]},
+  {a:"wdh",b:"mun",m:[{i:"🚗",d:"Carro",t:"8–9h",p:"—",c:"Trans-Kalahari Hwy"}]},
+  {a:"mun",b:"ksn",m:[{i:"🚗",d:"Carro",t:"4h",p:"—",c:"A3 road"}]},
+  {a:"ksn",b:"vic",m:[{i:"🚗",d:"Carro",t:"1h",p:"—",c:"—"},{i:"⛴",d:"Ferry Kazungula",t:"30min",p:"$2–5",c:"BWA ↔ ZAM"}]},
+  {a:"vic",b:"hre",m:[{i:"🚗",d:"Carro",t:"7h",p:"—",c:"A5 via Hwange"},{i:"✈️",d:"Voo",t:"1h",p:"$80–150",c:"Fastjet · Airlink"}]},
+  {a:"vic",b:"lun",m:[{i:"🚌",d:"Ônibus",t:"6h",p:"$10–20",c:"via Livingstone"},{i:"✈️",d:"Voo",t:"1h",p:"$80–150",c:"Proflight · Airlink"}]},
+  {a:"hre",b:"lun",m:[{i:"🚌",d:"Ônibus",t:"8h",p:"$15–25",c:"Fastjet Bus"},{i:"✈️",d:"Voo",t:"1h",p:"$100–180",c:"Proflight · Fastjet"}]},
+  {a:"lun",b:"lil",m:[{i:"🚌",d:"Ônibus",t:"10–12h",p:"$15–25",c:"AXA · Mazhandu"},{i:"✈️",d:"Voo",t:"1.5h",p:"$100–200",c:"Proflight · Malawian"}]},
+  {a:"lil",b:"bew",m:[{i:"🚌",d:"Ônibus",t:"12h",p:"$15–25",c:"via Tete"},{i:"✈️",d:"Voo",t:"1.5h",p:"$120–200",c:"LAM"}]},
+  {a:"lil",b:"mpq",m:[{i:"✈️",d:"Voo",t:"2h",p:"$150–280",c:"Malawian · LAM"}]},
+  {a:"mpq",b:"bew",m:[{i:"🚌",d:"Ônibus",t:"10h",p:"$20–35",c:"EN1"},{i:"✈️",d:"Voo",t:"1.5h",p:"$100–200",c:"LAM"}]},
+  {a:"tna",b:"mpq",m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$250–420",c:"Air Madagascar"}]},
+];
+
+let routeLayer=null,routesVisible=false;
+
+function routePopup(r){
+  const ha=HUBS[r.a],hb=HUBS[r.b];
+  const rows=r.m.map(x=>`<div class="rpop-row">
+    <span class="rpop-icon">${x.i}</span>
+    <span class="rpop-t">${x.t}</span>
+    <span class="rpop-p">${x.p}</span>
+    <span class="rpop-c">${x.d} · ${x.c}</span>
+  </div>`).join('');
+  return `<div class="rpop"><div class="rpop-name">${ha.n} ↔ ${hb.n}</div>${rows}</div>`;
+}
+
+function buildRouteLayer(){
+  routeLayer=L.layerGroup();
+  Object.values(HUBS).forEach(h=>{
+    L.circleMarker([h.lat,h.lng],{
+      radius:5,color:'#e6edf3',weight:1.5,fillColor:'#21262d',fillOpacity:1,zIndexOffset:500
+    }).bindTooltip(h.n,{direction:'top',offset:[0,-4]}).addTo(routeLayer);
+  });
+  ROUTES.forEach(r=>{
+    const ha=HUBS[r.a],hb=HUBS[r.b];
+    const hasAir=r.m.some(x=>x.i==='✈️');
+    const hasGnd=r.m.some(x=>x.i!=='✈️');
+    const color=hasAir&&hasGnd?'#a78bfa':hasAir?'#58a6ff':'#f59e0b';
+    const dash=hasGnd&&!hasAir?null:'7,5';
+    L.polyline([[ha.lat,ha.lng],[hb.lat,hb.lng]],
+      {color,weight:2.5,opacity:.85,dashArray:dash})
+      .bindPopup(routePopup(r),{maxWidth:340,className:'dark-popup'})
+      .addTo(routeLayer);
+  });
+}
+
+window.toggleRoutes=function(){
+  routesVisible=!routesVisible;
+  const btn=document.getElementById('routes-btn');
+  const leg=document.getElementById('rlayer-legend');
+  if(routesVisible){
+    if(!routeLayer)buildRouteLayer();
+    routeLayer.addTo(map);
+    btn.classList.add('active');
+    leg.classList.add('show');
+  }else{
+    if(routeLayer)map.removeLayer(routeLayer);
+    btn.classList.remove('active');
+    leg.classList.remove('show');
+  }
+};
 
 let map, allMarkers=[];
 
