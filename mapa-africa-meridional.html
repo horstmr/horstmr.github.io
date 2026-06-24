@@ -49,6 +49,8 @@ body{display:flex;flex-direction:column}
 .mcard{position:absolute;bottom:33px;left:50%;transform:translateX(-50%) scale(.85) translateY(8px);width:min(285px,82vw);background:#1e293b;border:1px solid #374151;border-radius:12px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 32px rgba(0,0,0,.85);transform-origin:50% 100%;cursor:pointer}
 .mcard:hover{border-color:#58a6ff}
 .mwrap:hover .mcard,.mwrap.open .mcard{opacity:1;transform:translateX(-50%) scale(1) translateY(0);pointer-events:auto}
+.mwrap.open-down .mcard{bottom:auto!important;top:33px;transform-origin:50% 0%;transform:translateX(-50%) scale(.85) translateY(-8px)}
+.mwrap.open-down.open .mcard{transform:translateX(-50%) scale(1) translateY(0);opacity:1;pointer-events:auto}
 .mwrap:hover .mthumb,.mwrap.open .mthumb{transform:scale(1.15);box-shadow:0 5px 18px rgba(0,0,0,.6)}
 .mcimg{width:100%;height:148px;object-fit:cover;display:block}
 .mcfb{width:100%;height:148px;display:none;align-items:center;justify-content:center;font-size:2.5rem}
@@ -95,9 +97,9 @@ body{display:flex;flex-direction:column}
   #sb-overlay.show{display:block}
   #sb-mob-close{display:flex}
   .cg-header{top:44px}
-  #rlayer-legend{top:auto;bottom:55px;right:8px;font-size:.7rem}
-  #legend{bottom:8px;left:8px;right:auto;padding:7px 10px;font-size:.66rem;max-height:45vh;overflow-y:auto}
+  #legend{position:fixed!important;bottom:8px;left:8px;right:auto;z-index:2000;padding:7px 10px;font-size:.66rem;max-height:40vh;overflow-y:auto}
   #legend .lt{display:none}
+  #rlayer-legend{position:fixed!important;bottom:55px;right:8px;z-index:1900;font-size:.7rem}
 }
 </style>
 </head>
@@ -340,6 +342,7 @@ function buildRouteLayer(){
   const pw=Math.min(320,window.innerWidth-48);
   ROUTES.forEach(r=>{
     const ha=HUBS[r.a],hb=HUBS[r.b];
+    if(!ha||!hb)return;
     const hasAir=r.m.some(x=>x.i==='✈️');
     const hasGnd=r.m.some(x=>x.i!=='✈️');
     const color=hasAir&&hasGnd?'#a78bfa':hasAir?'#58a6ff':'#f59e0b';
@@ -347,7 +350,7 @@ function buildRouteLayer(){
     const w=mob?5:2.5;
     const line=L.polyline([[ha.lat,ha.lng],[hb.lat,hb.lng]],
       {color,weight:w,opacity:.82,dashArray:dash})
-      .bindPopup(routePopup(r),{maxWidth:pw,className:'dark-popup'})
+      .bindPopup(routePopup(r),{maxWidth:pw,className:'dark-popup',keepInView:true})
       .addTo(routeLayer);
     const air=r.m.find(x=>x.i==='✈️');
     const gnd=r.m.find(x=>x.i!=='✈️');
@@ -356,7 +359,9 @@ function buildRouteLayer(){
     if(gnd)ttLines.push(`${gnd.i} ${gnd.t}`);
     line.bindTooltip(ttLines.join('<br>'),{sticky:true,className:'dark-tt',offset:[0,-6]});
     if(mob){
-      line.on('click',function(e){this.openPopup();L.DomEvent.stopPropagation(e);});
+      const hit=L.polyline([[ha.lat,ha.lng],[hb.lat,hb.lng]],{color:'transparent',weight:18,opacity:.001,interactive:true}).addTo(routeLayer);
+      hit.on('click',function(e){line.openPopup(e.latlng);if(e.originalEvent)e.originalEvent.stopPropagation();});
+      line.on('click',function(e){this.openPopup(e.latlng);if(e.originalEvent)e.originalEvent.stopPropagation();});
     }else{
       line.on('mouseover',function(){this.setStyle({weight:w+1.5,opacity:1});});
       line.on('mouseout',function(){this.setStyle({weight:w,opacity:.82});});
@@ -473,9 +478,14 @@ function buildMarkers(){
       const el=this.getElement();if(!el)return;
       const wrap=el.querySelector('.mwrap');if(!wrap)return;
       const wasOpen=wrap.classList.contains('open');
-      document.querySelectorAll('.mwrap.open').forEach(w=>w.classList.remove('open'));
+      document.querySelectorAll('.mwrap.open').forEach(w=>{w.classList.remove('open');w.classList.remove('open-down');});
       document.querySelectorAll('.leaflet-marker-icon').forEach(x=>x.style.zIndex='');
-      if(!wasOpen){wrap.classList.add('open');el.style.zIndex='10000';}
+      if(!wasOpen){
+        wrap.classList.add('open');
+        const pt=map.latLngToContainerPoint(this.getLatLng());
+        if(pt.y<window.innerHeight*0.42)wrap.classList.add('open-down');
+        el.style.zIndex='10000';
+      }
       L.DomEvent.stopPropagation(e);
     });
     allMarkers.push({marker:m,spot:s});
@@ -509,7 +519,7 @@ function initMap(){
     subdomains:'abcd',maxZoom:19
   }).addTo(map);
   map.on('click',function(){
-    document.querySelectorAll('.mwrap.open').forEach(w=>w.classList.remove('open'));
+    document.querySelectorAll('.mwrap.open').forEach(w=>{w.classList.remove('open');w.classList.remove('open-down');});
     document.querySelectorAll('.leaflet-marker-icon').forEach(el=>el.style.zIndex='');
   });
   buildSidebar();
