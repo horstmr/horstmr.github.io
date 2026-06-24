@@ -96,7 +96,7 @@ body{display:flex;flex-direction:column}
   #sb-mob-close{display:flex}
   .cg-header{top:44px}
   #rlayer-legend{top:auto;bottom:55px;right:8px;font-size:.7rem}
-  #legend{bottom:8px;right:8px;padding:7px 10px;font-size:.66rem}
+  #legend{bottom:8px;left:8px;right:auto;padding:7px 10px;font-size:.66rem;max-height:45vh;overflow-y:auto}
   #legend .lt{display:none}
 }
 </style>
@@ -344,7 +344,7 @@ function buildRouteLayer(){
     const hasGnd=r.m.some(x=>x.i!=='✈️');
     const color=hasAir&&hasGnd?'#a78bfa':hasAir?'#58a6ff':'#f59e0b';
     const dash=hasGnd&&!hasAir?null:'6,4';
-    const w=mob?3.5:2.5;
+    const w=mob?5:2.5;
     const line=L.polyline([[ha.lat,ha.lng],[hb.lat,hb.lng]],
       {color,weight:w,opacity:.82,dashArray:dash})
       .bindPopup(routePopup(r),{maxWidth:pw,className:'dark-popup'})
@@ -355,8 +355,12 @@ function buildRouteLayer(){
     if(air)ttLines.push(`✈ ${air.t}${brlLabel(air.p)}`);
     if(gnd)ttLines.push(`${gnd.i} ${gnd.t}`);
     line.bindTooltip(ttLines.join('<br>'),{sticky:true,className:'dark-tt',offset:[0,-6]});
-    line.on('mouseover',function(){this.setStyle({weight:w+1.5,opacity:1});});
-    line.on('mouseout',function(){this.setStyle({weight:w,opacity:.82});});
+    if(mob){
+      line.on('click',function(e){this.openPopup();L.DomEvent.stopPropagation(e);});
+    }else{
+      line.on('mouseover',function(){this.setStyle({weight:w+1.5,opacity:1});});
+      line.on('mouseout',function(){this.setStyle({weight:w,opacity:.82});});
+    }
   });
 }
 
