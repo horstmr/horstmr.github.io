@@ -60,11 +60,15 @@ body{display:flex;flex-direction:column}
 .mcdesc{font-size:.75rem;color:#94a3b8;line-height:1.5;margin-bottom:7px}
 .mctags{display:flex;gap:4px;flex-wrap:wrap}
 .mctag{font-size:.64rem;padding:2px 7px;border-radius:20px;background:#27384f;color:#94a3b8;border:1px solid #374151}
-#legend{position:absolute;bottom:18px;right:14px;background:#1e293bdd;border:1px solid #374151;border-radius:10px;padding:9px 13px;z-index:1000;font-size:.72rem;backdrop-filter:blur(4px)}
+#legend-wrap{position:absolute;bottom:18px;left:0;z-index:2000;display:flex;align-items:stretch}
+#legend-wrap.leg-col #legend{display:none}
+#legend{background:#1e293bdd;border:1px solid #374151;border-right:none;border-radius:6px 0 0 6px;padding:9px 13px;font-size:.72rem;backdrop-filter:blur(4px);max-height:55vh;overflow-y:auto}
 #legend .lt{font-size:.68rem;color:#94a3b8;margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 #legend .li{display:flex;align-items:center;gap:6px;padding:2px 0;color:#94a3b8;cursor:pointer;border-radius:4px;transition:color .15s}
 #legend .li:hover{color:#e6edf3}
 #legend .ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+#leg-tab{width:18px;background:#27384f;border:1px solid #374151;border-left:none;border-radius:0 6px 6px 0;color:#94a3b8;cursor:pointer;font-size:.6rem;padding:0;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#leg-tab:hover{background:#374151;color:#e6edf3}
 .rpop{min-width:220px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .rpop-name{font-size:.85rem;font-weight:700;color:#e6edf3;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #374151}
 .rpop-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:.76rem;border-top:1px solid #27384f}
@@ -77,15 +81,18 @@ body{display:flex;flex-direction:column}
 .dark-popup .leaflet-popup-content{margin:10px 13px!important}
 .dark-popup .leaflet-popup-tip{background:#1e293b!important}
 .dark-popup .leaflet-popup-close-button{color:#94a3b8!important;font-size:16px!important;top:6px!important;right:8px!important}
-#rlayer-legend{position:absolute;top:56px;right:14px;background:#1e293bee;border:1px solid #374151;border-radius:8px;padding:10px 14px;z-index:900;font-size:.72rem;backdrop-filter:blur(4px);display:none;pointer-events:none}
-#rlayer-legend.show{display:block}
+#rlayer-wrap{position:absolute;top:56px;right:0;z-index:1900;display:none;flex-direction:row;align-items:stretch;pointer-events:none}
+#rlayer-wrap.routes-on{display:flex}
+#rlayer-wrap.leg-col #rlayer-legend{display:none}
+#rl-tab{width:18px;background:#27384f;border:1px solid #374151;border-right:none;border-radius:6px 0 0 6px;color:#94a3b8;cursor:pointer;font-size:.6rem;padding:0;flex-shrink:0;display:flex;align-items:center;justify-content:center;pointer-events:auto}
+#rl-tab:hover{background:#374151;color:#e6edf3}
+#rlayer-legend{background:#1e293bee;border:1px solid #374151;border-left:none;border-radius:0 6px 6px 0;padding:10px 14px;font-size:.72rem;backdrop-filter:blur(4px);pointer-events:none}
 .rleg-ttl{font-size:.67rem;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
 .rleg-row{display:flex;align-items:center;gap:8px;padding:2px 0;color:#c9d1d9}
 .rleg-ln{width:26px;height:3px;flex-shrink:0;border-radius:2px}
 .dark-tt{background:rgba(15,23,42,.95)!important;border:1px solid #374151!important;border-radius:5px!important;color:#e6edf3!important;font-size:.73rem!important;font-weight:600!important;box-shadow:0 3px 10px rgba(0,0,0,.65)!important;padding:5px 10px!important;line-height:1.6!important}
 .dark-tt::before{display:none!important}
 @media(max-width:640px){
-  #mob-sb-btn{display:flex}
   #topbar p{display:none}
   #topbar{padding:8px 10px;gap:6px;flex-wrap:wrap}
   .filter-row{margin-left:0;width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
@@ -97,15 +104,16 @@ body{display:flex;flex-direction:column}
   #sb-overlay.show{display:block}
   #sb-mob-close{display:flex}
   .cg-header{top:44px}
-  #legend{position:fixed!important;bottom:8px;left:8px;right:auto;z-index:2000;padding:7px 10px;font-size:.66rem;max-height:40vh;overflow-y:auto}
+  #legend-wrap{position:fixed;bottom:8px;left:0}
+  #legend{padding:7px 10px;font-size:.66rem}
   #legend .lt{display:none}
-  #rlayer-legend{position:fixed!important;bottom:55px;right:8px;z-index:1900;font-size:.7rem}
+  #rlayer-wrap{position:fixed;top:auto;bottom:55px;right:0}
+  #rlayer-legend{font-size:.7rem}
 }
 </style>
 </head>
 <body>
 <div id="topbar">
-  <button id="mob-sb-btn" onclick="toggleSidebar()" aria-label="Menu destinos">☰</button>
   <h1>🌍 África Meridional</h1>
   <p>24 destinos imperdíveis · Passe o mouse nos marcadores ou clique na lista</p>
   <div class="filter-row">
@@ -129,13 +137,19 @@ body{display:flex;flex-direction:column}
   <div id="map-wrap">
     <div id="err">Não foi possível carregar o mapa.<br>Abra este arquivo com conexão à internet.</div>
     <div id="map"></div>
-    <div id="legend"></div>
-    <div id="rlayer-legend">
-      <div class="rleg-ttl">Tipo de rota</div>
-      <div class="rleg-row"><div class="rleg-ln" style="background:#58a6ff;border-top:2px dashed #58a6ff;height:0"></div><span>Aéreo</span></div>
-      <div class="rleg-row"><div class="rleg-ln" style="background:#f59e0b"></div><span>Terrestre / ferry</span></div>
-      <div class="rleg-row"><div class="rleg-ln" style="background:#a78bfa;border-top:2px dashed #a78bfa;height:0"></div><span>Ambos</span></div>
-      <div style="font-size:.65rem;color:#94a3b8;margin-top:7px;line-height:1.5">Toque/clique nas linhas<br>para detalhes</div>
+    <div id="legend-wrap">
+      <div id="legend"></div>
+      <button id="leg-tab" onclick="toggleLeg()">‹</button>
+    </div>
+    <div id="rlayer-wrap">
+      <button id="rl-tab" onclick="toggleRleg()">›</button>
+      <div id="rlayer-legend">
+        <div class="rleg-ttl">Tipo de rota</div>
+        <div class="rleg-row"><div class="rleg-ln" style="background:#58a6ff;border-top:2px dashed #58a6ff;height:0"></div><span>Aéreo</span></div>
+        <div class="rleg-row"><div class="rleg-ln" style="background:#f59e0b"></div><span>Terrestre / ferry</span></div>
+        <div class="rleg-row"><div class="rleg-ln" style="background:#a78bfa;border-top:2px dashed #a78bfa;height:0"></div><span>Ambos</span></div>
+        <div style="font-size:.65rem;color:#94a3b8;margin-top:7px;line-height:1.5">Toque/clique nas linhas<br>para detalhes</div>
+      </div>
     </div>
   </div>
 </div>
@@ -372,17 +386,29 @@ function buildRouteLayer(){
 window.toggleRoutes=function(){
   routesVisible=!routesVisible;
   const btn=document.getElementById('routes-btn');
-  const leg=document.getElementById('rlayer-legend');
+  const wrap=document.getElementById('rlayer-wrap');
   if(routesVisible){
     if(!routeLayer)buildRouteLayer();
     routeLayer.addTo(map);
     btn.classList.add('active');
-    leg.classList.add('show');
+    wrap.classList.add('routes-on');
   }else{
     if(routeLayer)map.removeLayer(routeLayer);
     btn.classList.remove('active');
-    leg.classList.remove('show');
+    wrap.classList.remove('routes-on');
   }
+};
+window.toggleRleg=function(){
+  const w=document.getElementById('rlayer-wrap');
+  const t=document.getElementById('rl-tab');
+  w.classList.toggle('leg-col');
+  t.textContent=w.classList.contains('leg-col')?'‹':'›';
+};
+window.toggleLeg=function(){
+  const w=document.getElementById('legend-wrap');
+  const t=document.getElementById('leg-tab');
+  w.classList.toggle('leg-col');
+  t.textContent=w.classList.contains('leg-col')?'›':'‹';
 };
 
 window.toggleSidebar=function(){
