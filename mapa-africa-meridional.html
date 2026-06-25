@@ -24,7 +24,7 @@ body{display:flex;flex-direction:column}
 #wrap{display:flex;flex:1;overflow:hidden}
 #sidebar{width:230px;background:#241306;border-right:1px solid #5C3817;overflow-y:auto;flex-shrink:0;transition:width .25s;position:relative}
 #sidebar.collapsed{width:0;overflow:hidden}
-#sb-toggle{width:14px;height:44px;background:#3A1C08;border:1px solid #5C3817;border-left:none;border-radius:0 7px 7px 0;cursor:pointer;color:#9E7B50;font-size:.65rem;padding:0;flex-shrink:0;align-self:center;transition:background .15s;line-height:1}
+#sb-toggle{width:56px;height:56px;background:#3A1C08;border:1px solid #5C3817;border-left:none;border-radius:0 12px 12px 0;cursor:pointer;color:#9E7B50;font-size:.6rem;padding:4px 2px;flex-shrink:0;align-self:center;transition:background .15s;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 #sb-toggle:hover{background:#5C3817;color:#F5EDD9}
 #sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200}
 #sb-overlay.show{display:block}
@@ -81,7 +81,7 @@ body{display:flex;flex-direction:column}
 #legend .li{display:flex;align-items:center;gap:6px;padding:2px 0;color:#9E7B50;cursor:pointer;border-radius:4px;transition:color .15s}
 #legend .li:hover{color:#F5EDD9}
 #legend .ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-#leg-tab{width:18px;background:#3A1C08;border:1px solid #5C3817;border-left:none;border-radius:0 6px 6px 0;color:#9E7B50;cursor:pointer;font-size:.6rem;padding:0;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#leg-tab{width:72px;min-height:60px;background:#3A1C08;border:1px solid #5C3817;border-left:none;border-radius:0 12px 12px 0;color:#9E7B50;cursor:pointer;font-size:.6rem;padding:4px 2px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;line-height:1}
 #leg-tab:hover{background:#5C3817;color:#F5EDD9}
 .rpop{min-width:220px;font-family:'Raleway',sans-serif}
 .rpop-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:#F5EDD9;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #5C3817;letter-spacing:.04em}
@@ -96,23 +96,27 @@ body{display:flex;flex-direction:column}
 .dark-popup .leaflet-popup-content{margin:10px 13px!important}
 .dark-popup .leaflet-popup-tip{background:#241306!important}
 .dark-popup .leaflet-popup-close-button{color:#9E7B50!important;font-size:16px!important;top:6px!important;right:8px!important}
-#rlayer-wrap{position:absolute;top:56px;right:0;z-index:1900;display:none;flex-direction:row;align-items:stretch;pointer-events:none}
-#rlayer-wrap.routes-on{display:flex}
+#right-panels{position:absolute;top:56px;right:0;z-index:1900;display:none;flex-direction:column;gap:5px;align-items:flex-end;pointer-events:none}
+#right-panels.routes-on{display:flex}
+#rlayer-wrap{display:flex;flex-direction:row;align-items:stretch;pointer-events:none}
 #rlayer-wrap.leg-col #rlayer-legend{display:none}
-#rl-tab{width:18px;background:#3A1C08;border:1px solid #5C3817;border-right:none;border-radius:6px 0 0 6px;color:#9E7B50;cursor:pointer;font-size:.6rem;padding:0;flex-shrink:0;display:flex;align-items:center;justify-content:center;pointer-events:auto}
+#rl-tab{width:72px;min-height:60px;background:#3A1C08;border:1px solid #5C3817;border-right:none;border-radius:12px 0 0 12px;color:#9E7B50;cursor:pointer;font-size:.6rem;padding:4px 2px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;pointer-events:auto;line-height:1}
 #rl-tab:hover{background:#5C3817;color:#F5EDD9}
-#rlayer-legend{background:#241306ee;border:1px solid #5C3817;border-left:none;border-radius:0 6px 6px 0;padding:10px 14px;font-size:.72rem;backdrop-filter:blur(4px);pointer-events:none}
+#rlayer-legend{background:#241306ee;border:1px solid #5C3817;border-left:none;border-radius:0 6px 6px 0;padding:10px 14px;font-size:.72rem;backdrop-filter:blur(4px);pointer-events:auto}
+#price-drawer{display:flex;flex-direction:row;align-items:stretch;pointer-events:none}
+#price-drawer.collapsed #price-panel{display:none}
+#price-tab{width:72px;min-height:60px;background:#3A1C08;border:1px solid #5C3817;border-right:none;border-radius:12px 0 0 12px;color:#D4A853;cursor:pointer;font-size:.6rem;padding:4px 2px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;pointer-events:auto;line-height:1}
+#price-tab:hover{background:#5C3817;color:#F0CB7C}
+#price-panel{background:#241306ee;border:1px solid #5C3817;border-left:none;border-radius:0 6px 6px 0;padding:10px 14px;font-size:.72rem;backdrop-filter:blur(4px);pointer-events:auto;min-width:160px}
 .rleg-ttl{font-family:'Cormorant Garamond',serif;font-size:.85rem;color:#9E7B50;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
 .rleg-row{display:flex;align-items:center;gap:8px;padding:2px 0;color:#C4A882}
 .rleg-ln{width:26px;height:3px;flex-shrink:0;border-radius:2px}
 .dark-tt{background:rgba(22,13,4,.96)!important;border:1px solid #5C3817!important;border-radius:5px!important;color:#F5EDD9!important;font-family:'Raleway',sans-serif!important;font-size:.73rem!important;font-weight:600!important;box-shadow:0 3px 10px rgba(0,0,0,.7)!important;padding:5px 10px!important;line-height:1.6!important}
 .dark-tt::before{display:none!important}
-#price-filter{display:none;align-items:center;gap:5px;padding:0 4px;border-left:1px solid #5C3817;margin-left:4px}
-#price-filter.show{display:flex}
-#price-slider{-webkit-appearance:none;appearance:none;width:88px;height:3px;border-radius:2px;background:#5C3817;outline:none;cursor:pointer}
-#price-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#D4A853;cursor:pointer;border:2px solid #241306;box-shadow:0 1px 4px rgba(0,0,0,.5)}
-#price-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#D4A853;cursor:pointer;border:2px solid #241306;box-shadow:0 1px 4px rgba(0,0,0,.5)}
-#price-label{font-family:'Raleway',sans-serif;font-size:.67rem;color:#D4A853;font-weight:700;white-space:nowrap;min-width:42px;text-align:right}
+#price-slider{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:2px;background:#5C3817;outline:none;cursor:pointer;margin:8px 0 4px;display:block}
+#price-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#D4A853;cursor:pointer;border:2px solid #241306;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+#price-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#D4A853;cursor:pointer;border:2px solid #241306;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+#price-label{font-family:'Cormorant Garamond',serif;font-size:1rem;color:#D4A853;font-weight:700;text-align:center;letter-spacing:.04em;display:block;margin-bottom:6px}
 @media(max-width:640px){
   #topbar p{display:none}
   #topbar{padding:8px 10px;gap:6px;flex-wrap:wrap}
@@ -128,7 +132,7 @@ body{display:flex;flex-direction:column}
   #legend-wrap{position:fixed;bottom:8px;left:0}
   #legend{padding:7px 10px;font-size:.66rem}
   #legend .lt{display:none}
-  #rlayer-wrap{position:fixed;top:auto;bottom:55px;right:0}
+  #right-panels{position:fixed;top:auto;bottom:55px;right:0}
   #rlayer-legend{font-size:.7rem}
   .gc-gal{height:300px}
 }
@@ -146,11 +150,6 @@ body{display:flex;flex-direction:column}
     <button class="filter-btn" onclick="filterSpots('unico',this)">✨ Únicos</button>
     <button id="btn-air" class="filter-btn" onclick="toggleAir()" style="border-color:#D4A85388;color:#D4A853">✈️ Aéreo</button>
     <button id="btn-gnd" class="filter-btn" onclick="toggleGnd()" style="border-color:#C4622D88;color:#C4622D">🚗 Terrestre</button>
-    <div id="price-filter">
-      <span style="font-size:.75rem;color:#94a3b8">💰</span>
-      <input type="range" id="price-slider" min="0" max="700" value="700" step="25" oninput="onPriceSlide(this.value)">
-      <span id="price-label">Todos</span>
-    </div>
   </div>
 </div>
 <div id="sb-overlay" onclick="toggleSidebar()"></div>
@@ -161,21 +160,32 @@ body{display:flex;flex-direction:column}
       <button onclick="toggleSidebar()">✕</button>
     </div>
   </div>
-  <button id="sb-toggle" onclick="toggleSidebar()">‹</button>
+  <button id="sb-toggle" onclick="toggleSidebar()"><span style="font-size:1.1rem">‹</span><span style="font-size:.55rem;letter-spacing:.05em">MENU</span></button>
   <div id="map-wrap">
     <div id="err">Não foi possível carregar o mapa.<br>Abra este arquivo com conexão à internet.</div>
     <div id="map"></div>
     <div id="legend-wrap">
       <div id="legend"></div>
-      <button id="leg-tab" onclick="toggleLeg()">‹</button>
+      <button id="leg-tab" onclick="toggleLeg()"><span style="font-size:1.1rem">‹</span><span style="font-size:.55rem;letter-spacing:.05em">MAPA</span></button>
     </div>
-    <div id="rlayer-wrap">
-      <button id="rl-tab" onclick="toggleRleg()">›</button>
-      <div id="rlayer-legend">
-        <div class="rleg-ttl">Rotas</div>
-        <div class="rleg-row"><div class="rleg-ln" style="border-top:2px dashed #D4A853;height:0"></div><span style="color:#F0CB7C">Aéreo</span></div>
-        <div class="rleg-row"><div class="rleg-ln" style="background:#C4622D"></div><span style="color:#E8906A">Terrestre</span></div>
-        <div style="font-size:.65rem;color:#9E7B50;margin-top:7px;line-height:1.5">Clique nas linhas<br>para detalhes</div>
+    <div id="right-panels">
+      <div id="rlayer-wrap">
+        <button id="rl-tab" onclick="toggleRleg()"><span style="font-size:1.1rem">›</span><span style="font-size:.55rem;letter-spacing:.05em">ROTAS</span></button>
+        <div id="rlayer-legend">
+          <div class="rleg-ttl">Rotas</div>
+          <div class="rleg-row"><div class="rleg-ln" style="border-top:2px dashed #D4A853;height:0"></div><span style="color:#F0CB7C">Aéreo</span></div>
+          <div class="rleg-row"><div class="rleg-ln" style="background:#C4622D"></div><span style="color:#E8906A">Terrestre</span></div>
+          <div style="font-size:.65rem;color:#9E7B50;margin-top:7px;line-height:1.5">Clique nas linhas<br>para detalhes</div>
+        </div>
+      </div>
+      <div id="price-drawer">
+        <button id="price-tab" onclick="togglePriceDrawer()"><span style="font-size:1.1rem">💰</span><span style="font-size:.55rem;letter-spacing:.05em">PREÇO</span></button>
+        <div id="price-panel">
+          <div class="rleg-ttl">Preço Máximo</div>
+          <input type="range" id="price-slider" min="0" max="700" value="700" step="25" oninput="onPriceSlide(this.value)">
+          <div id="price-label">Todos</div>
+          <div style="font-size:.62rem;color:#9E7B50;line-height:1.6;margin-top:2px">🚗 Carro: grátis<br>🚌 Ônibus: ~$35+<br>✈ Voo: ~$80+</div>
+        </div>
       </div>
     </div>
   </div>
@@ -493,8 +503,7 @@ function updateRouteVis(){
   const on=airVisible||gndVisible;
   if(on&&hubLayer&&!map.hasLayer(hubLayer))hubLayer.addTo(map);
   else if(!on&&hubLayer)map.removeLayer(hubLayer);
-  document.getElementById('rlayer-wrap').classList.toggle('routes-on',on);
-  document.getElementById('price-filter').classList.toggle('show',on);
+  document.getElementById('right-panels').classList.toggle('routes-on',on);
   if(on&&routeData.length)applyPriceFilter();
 }
 window.toggleAir=function(){
@@ -515,17 +524,22 @@ window.toggleGnd=function(){
 };
 window.toggleRleg=function(){
   const w=document.getElementById('rlayer-wrap');
-  const t=document.getElementById('rl-tab');
   w.classList.toggle('leg-col');
-  t.textContent=w.classList.contains('leg-col')?'‹':'›';
+  const col=w.classList.contains('leg-col');
+  document.querySelector('#rl-tab span:first-child').textContent=col?'‹':'›';
 };
 window.toggleLeg=function(){
   const w=document.getElementById('legend-wrap');
-  const t=document.getElementById('leg-tab');
   w.classList.toggle('leg-col');
-  t.textContent=w.classList.contains('leg-col')?'›':'‹';
+  const col=w.classList.contains('leg-col');
+  document.querySelector('#leg-tab span:first-child').textContent=col?'›':'‹';
 };
-
+window.togglePriceDrawer=function(){
+  const d=document.getElementById('price-drawer');
+  d.classList.toggle('collapsed');
+  const col=d.classList.contains('collapsed');
+  document.querySelector('#price-tab span:first-child').textContent=col?'💸':'💰';
+};
 window.toggleSidebar=function(){
   const sb=document.getElementById('sidebar');
   const toggle=document.getElementById('sb-toggle');
@@ -535,7 +549,8 @@ window.toggleSidebar=function(){
     overlay.classList.toggle('show',open);
   }else{
     const collapsed=sb.classList.toggle('collapsed');
-    if(toggle)toggle.textContent=collapsed?'›':'‹';
+    const arr=toggle&&toggle.querySelector('span:first-child');
+    if(arr)arr.textContent=collapsed?'›':'‹';
     setTimeout(()=>map&&map.invalidateSize(),260);
   }
 };
@@ -686,6 +701,8 @@ function initMap(){
   buildSidebar();
   buildMarkers();
   buildLegend();
+  toggleAir();
+  toggleGnd();
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMap);
