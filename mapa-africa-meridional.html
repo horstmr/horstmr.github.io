@@ -88,6 +88,7 @@ body{display:flex;flex-direction:column}
 .rpop-t{color:#e6edf3;font-weight:700}
 .rpop-p{color:#3fb950;font-weight:600;margin:0 5px}
 .rpop-c{color:#94a3b8;font-size:.68rem;display:block;margin-top:2px}
+.leaflet-popup-pane{z-index:20000!important}
 .dark-popup .leaflet-popup-content-wrapper{background:#1e293b!important;border:1px solid #374151!important;border-radius:10px!important;color:#e6edf3!important;box-shadow:0 8px 28px rgba(0,0,0,.75)!important}
 .dark-popup .leaflet-popup-content{margin:10px 13px!important}
 .dark-popup .leaflet-popup-tip{background:#1e293b!important}
@@ -586,6 +587,11 @@ function initMap(){
     subdomains:'abcd',maxZoom:19
   }).addTo(map);
   map.on('click',function(){ closeCard(); });
+  map.on('popupopen',function(){
+    closeCard();
+    document.querySelectorAll('.mwrap.open').forEach(w=>w.classList.remove('open'));
+    document.querySelectorAll('.leaflet-marker-icon').forEach(el=>el.style.zIndex='');
+  });
   buildSidebar();
   buildMarkers();
   buildLegend();
