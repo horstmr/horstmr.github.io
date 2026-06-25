@@ -49,7 +49,7 @@ body{display:flex;flex-direction:column}
 .mthumb img{width:100%;height:100%;object-fit:cover;display:block}
 .mflag{position:absolute;bottom:2px;right:2px;width:18px;height:12px;border-radius:2px;overflow:hidden;border:1px solid rgba(255,255,255,.4);pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.7)}
 .mflag img{width:100%;height:100%;object-fit:cover;display:block}
-.mwrap:hover .mthumb,.mwrap.open .mthumb{transform:scale(1.15);box-shadow:0 6px 24px rgba(0,0,0,.7)}
+.mwrap:hover .mthumb,.mwrap.open .mthumb{transform:scale(2);box-shadow:0 8px 28px rgba(0,0,0,.8)}
 #gcard{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#FDF5E8;border-radius:22px 22px 0 0;box-shadow:0 -6px 36px rgba(0,0,0,.3);transform:translateY(110%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:82vh;display:flex;flex-direction:column;overflow:hidden}
 #gcard.open{transform:translateY(0)}
 .gc-handle{width:40px;height:4px;background:#C4A882;border-radius:2px;margin:10px auto 0;flex-shrink:0;cursor:grab}
@@ -628,6 +628,7 @@ function buildMarkers(){
   allMarkers=[];
   SPOTS.forEach(s=>{
     const m=L.marker([s.lat,s.lng],{icon:makeIcon(s)}).addTo(map);
+    m.bindTooltip(s.name,{direction:'top',className:'dark-tt',offset:[0,-82],sticky:false});
     m.on('mouseover',function(){
       const el=this.getElement();if(el)el.style.zIndex='10000';
     });
