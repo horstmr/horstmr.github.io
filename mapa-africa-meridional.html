@@ -17,7 +17,8 @@ body{display:flex;flex-direction:column}
 .filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;align-items:center}
 .filter-btn{padding:5px 12px;border-radius:20px;border:1px solid #374151;background:transparent;color:#94a3b8;cursor:pointer;font-size:.74rem;transition:all .15s;white-space:nowrap;flex-shrink:0}
 .filter-btn.active,.filter-btn:hover{background:#2d6a4f;color:#fff;border-color:#2d6a4f}
-#routes-btn.active{background:#1d3a6e!important;color:#93c5fd!important;border-color:#3b82f6!important}
+#btn-air.active{background:#1d3a6e!important;color:#93c5fd!important;border-color:#60a5fa!important}
+#btn-gnd.active{background:#431a00!important;color:#fb923c!important;border-color:#fb923c!important}
 #wrap{display:flex;flex:1;overflow:hidden}
 #sidebar{width:230px;background:#1e293b;border-right:1px solid #374151;overflow-y:auto;flex-shrink:0;transition:width .25s;position:relative}
 #sidebar.collapsed{width:0;overflow:hidden}
@@ -135,7 +136,8 @@ body{display:flex;flex-direction:column}
     <button class="filter-btn" onclick="filterSpots('mar',this)">🌊 Costa</button>
     <button class="filter-btn" onclick="filterSpots('paisagem',this)">🏔️ Paisagem</button>
     <button class="filter-btn" onclick="filterSpots('unico',this)">✨ Únicos</button>
-    <button id="routes-btn" class="filter-btn" onclick="toggleRoutes()" style="border-color:#3b82f688;color:#8ac0f5">✈️ Rotas &amp; Preços</button>
+    <button id="btn-air" class="filter-btn" onclick="toggleAir()" style="border-color:#60a5fa88;color:#60a5fa">✈️ Aéreo</button>
+    <button id="btn-gnd" class="filter-btn" onclick="toggleGnd()" style="border-color:#fb923c88;color:#fb923c">🚗 Terrestre</button>
   </div>
 </div>
 <div id="sb-overlay" onclick="toggleSidebar()"></div>
@@ -157,11 +159,10 @@ body{display:flex;flex-direction:column}
     <div id="rlayer-wrap">
       <button id="rl-tab" onclick="toggleRleg()">›</button>
       <div id="rlayer-legend">
-        <div class="rleg-ttl">Tipo de rota</div>
-        <div class="rleg-row"><div class="rleg-ln" style="background:#58a6ff;border-top:2px dashed #58a6ff;height:0"></div><span>Aéreo</span></div>
-        <div class="rleg-row"><div class="rleg-ln" style="background:#f59e0b"></div><span>Terrestre / ferry</span></div>
-        <div class="rleg-row"><div class="rleg-ln" style="background:#a78bfa;border-top:2px dashed #a78bfa;height:0"></div><span>Ambos</span></div>
-        <div style="font-size:.65rem;color:#94a3b8;margin-top:7px;line-height:1.5">Toque/clique nas linhas<br>para detalhes</div>
+        <div class="rleg-ttl">Rotas</div>
+        <div class="rleg-row"><div class="rleg-ln" style="border-top:2px dashed #60a5fa;height:0"></div><span style="color:#93c5fd">Aéreo</span></div>
+        <div class="rleg-row"><div class="rleg-ln" style="background:#fb923c"></div><span style="color:#fdba74">Terrestre</span></div>
+        <div style="font-size:.65rem;color:#94a3b8;margin-top:7px;line-height:1.5">Clique nas linhas<br>para detalhes</div>
       </div>
     </div>
   </div>
@@ -336,19 +337,20 @@ const ROUTES=[
   {a:"liw",b:"bew",m:[{i:"🚌",d:"Ônibus",t:"8h",p:"$15–25",c:"via Zobue · EN7"}]},
   {a:"lil",b:"slm",m:[{i:"🚗",d:"Carro",t:"3h",p:"—",c:"M18 via Dowa"}]},
   {a:"pem",b:"qui",m:[{i:"🚗",d:"Carro",t:"3h",p:"—",c:"EN380 norte"}]},
-  {a:"cpt",b:"dur",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–130",c:"Safair · LIFT · CemAir"}]},
-  {a:"cpt",b:"wdh",m:[{i:"✈️",d:"Voo",t:"2h10m",p:"$150–280",c:"Airlink · Safair"}]},
+  {a:"cpt",b:"dur",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–130",c:"Safair · LIFT · CemAir"},{i:"🚌",d:"Ônibus",t:"21h",p:"$40–55",c:"Intercape · Greyhound"}]},
+  {a:"cpt",b:"wdh",m:[{i:"✈️",d:"Voo",t:"2h10m",p:"$150–280",c:"Airlink · Safair"},{i:"🚌",d:"Ônibus",t:"19h",p:"$35–50",c:"Intercape (via Springbok)"}]},
   {a:"cpt",b:"hre",m:[{i:"✈️",d:"Voo",t:"3h10m",p:"$200–380",c:"Airlink"}]},
-  {a:"cpt",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h10m",p:"$55–100",c:"Airlink · Safair"}]},
-  {a:"cpt",b:"els",m:[{i:"✈️",d:"Voo",t:"1h35m",p:"$65–120",c:"CemAir · Safair"}]},
-  {a:"jnb",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h45m",p:"$65–120",c:"Airlink · Safair · SAA"}]},
-  {a:"jnb",b:"els",m:[{i:"✈️",d:"Voo",t:"1h30m",p:"$60–110",c:"Airlink · CemAir · Safair"}]},
-  {a:"dur",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h",p:"$60–100",c:"Airlink · Safair"}]},
-  {a:"dur",b:"els",m:[{i:"✈️",d:"Voo",t:"45min",p:"$50–90",c:"Airlink · CemAir"}]},
+  {a:"cpt",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h10m",p:"$55–100",c:"Airlink · Safair"},{i:"🚌",d:"Ônibus",t:"8h",p:"$20–35",c:"Intercape (N2)"}]},
+  {a:"cpt",b:"els",m:[{i:"✈️",d:"Voo",t:"1h35m",p:"$65–120",c:"CemAir · Safair"},{i:"🚌",d:"Ônibus",t:"11h",p:"$25–40",c:"Intercape (N2)"}]},
+  {a:"jnb",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h45m",p:"$65–120",c:"Airlink · Safair · SAA"},{i:"🚌",d:"Ônibus",t:"11h",p:"$25–40",c:"Greyhound · Intercape"}]},
+  {a:"jnb",b:"els",m:[{i:"✈️",d:"Voo",t:"1h30m",p:"$60–110",c:"Airlink · CemAir · Safair"},{i:"🚌",d:"Ônibus",t:"10h",p:"$22–35",c:"Intercape"}]},
+  {a:"dur",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h",p:"$60–100",c:"Airlink · Safair"},{i:"🚗",d:"Carro",t:"6h30m",p:"—",c:"N2 pela costa"}]},
+  {a:"dur",b:"els",m:[{i:"✈️",d:"Voo",t:"45min",p:"$50–90",c:"Airlink · CemAir"},{i:"🚗",d:"Carro",t:"4h30m",p:"—",c:"N2"}]},
   {a:"plz",b:"els",m:[{i:"🚗",d:"Carro",t:"2h30m",p:"—",c:"N2 pela costa"}]},
+  {a:"plz",b:"geo",m:[{i:"🚗",d:"Carro",t:"3h30m",p:"—",c:"N2 Garden Route"}]},
 ];
 
-let routeLayer=null,routesVisible=false;
+let airLayer=null,gndLayer=null,hubLayer=null,airVisible=false,gndVisible=false;
 const USD_BRL=5.75;
 function brlLabel(p){
   const m=p.match(/\$(\d+)[–\-](\d+)/);
@@ -370,58 +372,81 @@ function routePopup(r){
   return `<div class="rpop"><div class="rpop-name">${ha.n} ↔ ${hb.n}</div>${rows}</div>`;
 }
 
-function buildRouteLayer(){
-  routeLayer=L.layerGroup();
+function curved(a,b,dir){
+  const mlat=(a[0]+b[0])/2,mlng=(a[1]+b[1])/2;
+  const dlat=b[0]-a[0],dlng=b[1]-a[1];
+  const len=Math.sqrt(dlat*dlat+dlng*dlng);
+  if(len<0.001)return [a,b];
+  const k=len*0.14*dir;
+  return [a,[mlat-dlng/len*k,mlng+dlat/len*k],b];
+}
+
+function buildRouteLayers(){
+  hubLayer=L.layerGroup();
   Object.values(HUBS).forEach(h=>{
     L.circleMarker([h.lat,h.lng],{
-      radius:5,color:'#94a3b8',weight:1.5,fillColor:'#1e293b',fillOpacity:1,zIndexOffset:500
-    }).bindTooltip(h.n,{direction:'top',offset:[0,-5]}).addTo(routeLayer);
+      radius:4,color:'#94a3b8',weight:1.5,fillColor:'#1e293b',fillOpacity:1,zIndexOffset:500
+    }).bindTooltip(h.n,{direction:'top',offset:[0,-5]}).addTo(hubLayer);
   });
+  airLayer=L.layerGroup();
+  gndLayer=L.layerGroup();
   const mob=window.innerWidth<=640;
   const pw=Math.min(320,window.innerWidth-48);
+  const w=mob?2:1;
   ROUTES.forEach(r=>{
     const ha=HUBS[r.a],hb=HUBS[r.b];
     if(!ha||!hb)return;
     const hasAir=r.m.some(x=>x.i==='✈️');
     const hasGnd=r.m.some(x=>x.i!=='✈️');
-    const color=hasAir&&hasGnd?'#a78bfa':hasAir?'#58a6ff':'#f59e0b';
-    const dash=hasGnd&&!hasAir?null:'6,4';
-    const w=mob?5:2.5;
-    const line=L.polyline([[ha.lat,ha.lng],[hb.lat,hb.lng]],
-      {color,weight:w,opacity:.82,dashArray:dash})
-      .bindPopup(routePopup(r),{maxWidth:pw,className:'dark-popup',keepInView:true})
-      .addTo(routeLayer);
+    const hasBoth=hasAir&&hasGnd;
+    const popup=routePopup(r);
+    const popOpts={maxWidth:pw,className:'dark-popup',keepInView:true};
     const air=r.m.find(x=>x.i==='✈️');
     const gnd=r.m.find(x=>x.i!=='✈️');
     const ttLines=[];
     if(air)ttLines.push(`✈ ${air.t}${brlLabel(air.p)}`);
     if(gnd)ttLines.push(`${gnd.i} ${gnd.t}`);
-    line.bindTooltip(ttLines.join('<br>'),{sticky:true,className:'dark-tt',offset:[0,-6]});
-    if(mob){
-      const hit=L.polyline([[ha.lat,ha.lng],[hb.lat,hb.lng]],{color:'transparent',weight:18,opacity:.001,interactive:true}).addTo(routeLayer);
-      hit.on('click',function(e){line.openPopup(e.latlng);if(e.originalEvent)e.originalEvent.stopPropagation();});
-      line.on('click',function(e){this.openPopup(e.latlng);if(e.originalEvent)e.originalEvent.stopPropagation();});
-    }else{
-      line.on('mouseover',function(){this.setStyle({weight:w+1.5,opacity:1});});
-      line.on('mouseout',function(){this.setStyle({weight:w,opacity:.82});});
+    const tt=ttLines.join('<br>');
+    function makeLine(layer,color,dashArray,dir){
+      const pts=curved([ha.lat,ha.lng],[hb.lat,hb.lng],dir);
+      const line=L.polyline(pts,{color,weight:w,opacity:.85,dashArray})
+        .bindPopup(popup,popOpts).addTo(layer);
+      line.bindTooltip(tt,{sticky:true,className:'dark-tt',offset:[0,-6]});
+      if(mob){
+        const hit=L.polyline(pts,{color:'transparent',weight:18,opacity:.001}).addTo(layer);
+        hit.on('click',function(e){line.openPopup(e.latlng);if(e.originalEvent)e.originalEvent.stopPropagation();});
+        line.on('click',function(e){this.openPopup(e.latlng);if(e.originalEvent)e.originalEvent.stopPropagation();});
+      }else{
+        line.on('mouseover',function(){this.setStyle({weight:w+1.5,opacity:1});});
+        line.on('mouseout',function(){this.setStyle({weight:w,opacity:.85});});
+      }
     }
+    if(hasAir)makeLine(airLayer,'#60a5fa','5,4',hasBoth?0.5:0.3);
+    if(hasGnd)makeLine(gndLayer,'#fb923c',null,hasBoth?-0.5:-0.3);
   });
 }
 
-window.toggleRoutes=function(){
-  routesVisible=!routesVisible;
-  const btn=document.getElementById('routes-btn');
-  const wrap=document.getElementById('rlayer-wrap');
-  if(routesVisible){
-    if(!routeLayer)buildRouteLayer();
-    routeLayer.addTo(map);
-    btn.classList.add('active');
-    wrap.classList.add('routes-on');
-  }else{
-    if(routeLayer)map.removeLayer(routeLayer);
-    btn.classList.remove('active');
-    wrap.classList.remove('routes-on');
-  }
+function updateRouteVis(){
+  const on=airVisible||gndVisible;
+  if(on&&hubLayer&&!map.hasLayer(hubLayer))hubLayer.addTo(map);
+  else if(!on&&hubLayer)map.removeLayer(hubLayer);
+  document.getElementById('rlayer-wrap').classList.toggle('routes-on',on);
+}
+window.toggleAir=function(){
+  if(!airLayer)buildRouteLayers();
+  airVisible=!airVisible;
+  if(airVisible)airLayer.addTo(map);
+  else map.removeLayer(airLayer);
+  document.getElementById('btn-air').classList.toggle('active',airVisible);
+  updateRouteVis();
+};
+window.toggleGnd=function(){
+  if(!gndLayer)buildRouteLayers();
+  gndVisible=!gndVisible;
+  if(gndVisible)gndLayer.addTo(map);
+  else map.removeLayer(gndLayer);
+  document.getElementById('btn-gnd').classList.toggle('active',gndVisible);
+  updateRouteVis();
 };
 window.toggleRleg=function(){
   const w=document.getElementById('rlayer-wrap');
@@ -595,7 +620,6 @@ function initMap(){
   buildSidebar();
   buildMarkers();
   buildLegend();
-  toggleRoutes();
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMap);
