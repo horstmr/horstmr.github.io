@@ -706,18 +706,20 @@ window.flyToCountry=function(cn){
 async function buildCountryLayers(){
   try{
     if(typeof topojson==='undefined')return;
-    const resp=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const resp=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
     const world=await resp.json();
     const CLRS={
-      "516":{c:"#D4A853"},"72":{c:"#4CAF50"},"716":{c:"#20B2AA"},
-      "894":{c:"#FF8C00"},"710":{c:"#88C057"},"508":{c:"#00BCD4"},
-      "450":{c:"#AB47BC"},"454":{c:"#42A5F5"},"426":{c:"#FF5722"},"748":{c:"#CE93D8"},
+      "516":{c:"#E0B040"},"72":{c:"#60C870"},"716":{c:"#30C8A8"},
+      "072":{c:"#60C870"},
+      "894":{c:"#E89040"},"710":{c:"#B0D840"},"508":{c:"#30C0D0"},
+      "450":{c:"#CC60E0"},"454":{c:"#5090E0"},"426":{c:"#E85830"},"748":{c:"#D060C0"},
     };
     topojson.feature(world,world.objects.countries).features.forEach(feat=>{
-      const info=CLRS[String(feat.id)];
+      const id=String(feat.id);
+      const info=CLRS[id]||CLRS[id.padStart(3,'0')];
       if(!info)return;
       L.geoJSON(feat,{
-        style:{fillColor:info.c,fillOpacity:0.17,color:info.c,weight:0.7,opacity:0.35,interactive:false}
+        style:{fillColor:info.c,fillOpacity:0.22,color:info.c,weight:1.2,opacity:0.55,interactive:false}
       }).addTo(map);
     });
   }catch(e){console.warn('country layers:',e);}
@@ -726,10 +728,11 @@ async function buildCountryLayers(){
 function initMap(){
   if(typeof L==='undefined'){document.getElementById('err').style.display='flex';return;}
   map=L.map('map',{center:[-18,30],zoom:5});
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
     attribution:'© <a href="https://www.openstreetmap.org">OpenStreetMap</a> © <a href="https://carto.com">CARTO</a>',
     subdomains:'abcd',maxZoom:19
   }).addTo(map);
+  map.getPane('tilePane').style.filter='brightness(0.38) saturate(0.8) contrast(1.05)';
   map.on('click',function(){ closeCard(); });
   map.on('popupopen',function(){
     closeCard();
