@@ -46,28 +46,28 @@ body{display:flex;flex-direction:column}
 .mthumb img{width:100%;height:100%;object-fit:cover;display:block}
 .mflag{position:absolute;bottom:1px;right:1px;width:12px;height:8px;border-radius:2px;overflow:hidden;border:1px solid rgba(255,255,255,.3);pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.7)}
 .mflag img{width:100%;height:100%;object-fit:cover;display:block}
-.mcard{position:absolute;bottom:33px;left:50%;transform:translateX(-50%) scale(.85) translateY(8px);width:min(310px,92vw);background:#fff;border:none;border-radius:16px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 40px rgba(0,0,0,.38);transform-origin:50% 100%;cursor:default;max-height:65vh;display:flex;flex-direction:column}
-.mcard:hover{box-shadow:0 14px 48px rgba(0,0,0,.45)}
-.mwrap:hover .mcard,.mwrap.open .mcard{opacity:1;transform:translateX(-50%) scale(1) translateY(0);pointer-events:auto}
-.mwrap.open-down .mcard{bottom:auto!important;top:33px;transform-origin:50% 0%;transform:translateX(-50%) scale(.85) translateY(-8px)}
-.mwrap.open-down.open .mcard{transform:translateX(-50%) scale(1) translateY(0);opacity:1;pointer-events:auto}
-.mwrap:hover .mthumb,.mwrap.open .mthumb{transform:scale(1.15);box-shadow:0 5px 18px rgba(0,0,0,.6)}
-.mgal{position:relative;height:175px;flex-shrink:0;overflow:hidden;background:#e8e8e8;border-radius:16px 16px 0 0}
-.mgal-t{display:flex;height:100%;overflow-x:scroll;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none}
-.mgal-t::-webkit-scrollbar{display:none}
-.mgal-sl{min-width:100%;height:175px;scroll-snap-align:start;flex-shrink:0}
-.mgal-sl img{width:100%;height:100%;object-fit:cover;display:block}
-.gal-btn{position:absolute;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;font-size:.6rem;display:flex;align-items:center;justify-content:center;color:#111;box-shadow:0 1px 6px rgba(0,0,0,.2);z-index:2;font-weight:700;line-height:1}
-.gal-prev{left:9px}.gal-next{right:9px}
-.gal-num{position:absolute;top:9px;right:9px;background:rgba(0,0,0,.52);color:#fff;font-size:.58rem;padding:2px 7px;border-radius:12px;font-weight:600;pointer-events:none}
-.mcbody{padding:10px 13px 13px;background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.mc-loc{font-size:.63rem;color:#888;letter-spacing:.06em;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:5px}
-.mctitle{font-size:.95rem;font-weight:700;color:#111;margin-bottom:4px;line-height:1.2}
-.mcdesc{font-size:.73rem;color:#555;line-height:1.45;margin-bottom:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.mctags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px}
-.mctag{font-size:.62rem;padding:2px 7px;border-radius:20px;background:#f5f5f5;color:#444;border:1px solid #e5e5e5}
-.mc-gbtn{display:block;width:100%;padding:8px;background:#ff385c;color:#fff;border:none;border-radius:9px;font-size:.76rem;font-weight:700;cursor:pointer;text-align:center;letter-spacing:.02em}
-.mc-gbtn:hover{background:#e31c5f}
+.mwrap:hover .mthumb,.mwrap.open .mthumb{transform:scale(1.2);box-shadow:0 5px 20px rgba(0,0,0,.65)}
+#gcard{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -4px 32px rgba(0,0,0,.22);transform:translateY(110%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:82vh;display:flex;flex-direction:column;overflow:hidden}
+#gcard.open{transform:translateY(0)}
+.gc-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:10px auto 0;flex-shrink:0;cursor:grab}
+.gc-gal{position:relative;height:240px;flex-shrink:0;overflow:hidden;background:#f0f0f0}
+.gc-scroll{display:flex;height:100%;overflow-x:scroll;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none}
+.gc-scroll::-webkit-scrollbar{display:none}
+.gc-slide{min-width:100%;height:100%;scroll-snap-align:start;flex-shrink:0}
+.gc-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.gc-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:4px;align-items:center}
+.gc-dot{height:6px;width:6px;border-radius:3px;background:rgba(255,255,255,.5);transition:all .25s}
+.gc-dot.act{width:20px;background:#fff}
+.gc-close{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.9);border:none;font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#111;box-shadow:0 1px 8px rgba(0,0,0,.25)}
+.gc-body{padding:16px 18px 32px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+.gc-loc{font-size:.7rem;color:#717171;font-weight:500;display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.gc-title{font-size:1.15rem;font-weight:700;color:#111;line-height:1.25;margin-bottom:7px}
+.gc-desc{font-size:.82rem;color:#484848;line-height:1.55;margin-bottom:12px}
+.gc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.gc-tag{font-size:.67rem;padding:3px 10px;border-radius:20px;background:#f7f7f7;color:#484848;border:1px solid #e8e8e8}
+.gc-sep{height:1px;background:#ebebeb;margin-bottom:14px}
+.gc-gbtn{display:block;width:100%;padding:13px;background:#ff385c;color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;text-align:center;letter-spacing:.01em}
+.gc-gbtn:hover{background:#e31c5f}
 #legend-wrap{position:absolute;bottom:18px;left:0;z-index:2000;display:flex;align-items:stretch}
 #legend-wrap.leg-col #legend{display:none}
 #legend{background:#1e293bdd;border:1px solid #374151;border-right:none;border-radius:6px 0 0 6px;padding:9px 13px;font-size:.72rem;backdrop-filter:blur(4px);max-height:55vh;overflow-y:auto}
@@ -117,7 +117,7 @@ body{display:flex;flex-direction:column}
   #legend .lt{display:none}
   #rlayer-wrap{position:fixed;top:auto;bottom:55px;right:0}
   #rlayer-legend{font-size:.7rem}
-  .mgal,.mgal-sl{height:155px}
+  .gc-gal{height:200px}
 }
 </style>
 </head>
@@ -444,10 +444,7 @@ const countryCenter={
 
 function makeIcon(s){
   const ci=CTRY[s.c];
-  const gid='g'+s.name.replace(/\W+/g,'');
   const photos=s.photos||[s.photo];
-  const slides=photos.map(u=>`<div class="mgal-sl" style="background:${ci.color}22"><img src="${u}" loading="lazy" onerror="this.style.display='none'"></div>`).join('');
-  const nav=photos.length>1?`<button class="gal-btn gal-prev" onclick="galGo('${gid}',-1);event.stopPropagation()">&#10094;</button><button class="gal-btn gal-next" onclick="galGo('${gid}',1);event.stopPropagation()">&#10095;</button><div class="gal-num" id="${gid}_n">1 / ${photos.length}</div>`:'';
   const html=`<div class="mwrap" style="--mc:${ci.color}">
     <div class="mthumb">
       <img src="${photos[0]}" alt="${s.name}" loading="lazy"
@@ -455,33 +452,37 @@ function makeIcon(s){
       <div style="display:none"></div>
     </div>
     <div class="mflag"><img src="https://flagcdn.com/w40/${ci.code}.png" style="width:100%;height:100%;object-fit:cover;display:block" alt=""></div>
-    <div class="mcard" data-q="${s.name} ${s.c}">
-      <div class="mgal" id="${gid}">
-        <div class="mgal-t" id="${gid}_t" onscroll="galScroll(this,'${gid}_n',${photos.length})">${slides}</div>
-        ${nav}
-      </div>
-      <div class="mcbody">
-        <div class="mc-loc">${flagImg(ci.code,11)} ${s.c}</div>
-        <div class="mctitle">${s.name}</div>
-        <div class="mcdesc">${s.desc}</div>
-        <div class="mctags">${s.tags.map(t=>`<span class="mctag">${t}</span>`).join('')}</div>
-        <button class="mc-gbtn" onclick="window.open('https://www.google.com/search?tbm=isch&q='+encodeURIComponent(this.closest('.mcard').dataset.q),'_blank');event.stopPropagation()">Ver mais fotos →</button>
-      </div>
-    </div>
   </div>`;
   return L.divIcon({className:'map-mc',html,iconSize:[25,25],iconAnchor:[12,25]});
 }
 
-window.galGo=function(id,dir){
-  const t=document.getElementById(id+'_t');
-  if(!t)return;
-  t.scrollBy({left:dir*t.offsetWidth,behavior:'smooth'});
+window.showCard=function(s){
+  const ci=CTRY[s.c];
+  const photos=s.photos||[s.photo];
+  const sc=document.getElementById('gc_s');
+  sc.innerHTML=photos.map(u=>`<div class="gc-slide" style="background:${ci.color}11"><img src="${u}" loading="lazy" onerror="this.style.display='none'"></div>`).join('');
+  sc.scrollLeft=0;
+  const dd=document.getElementById('gc_d');
+  if(photos.length>1){
+    dd.innerHTML=photos.map((_,i)=>`<div class="gc-dot${i===0?' act':''}"></div>`).join('');
+    dd.style.display='flex';
+  }else{dd.style.display='none';}
+  document.getElementById('gc_loc').innerHTML=flagImg(ci.code,12)+' <span>'+s.c+'</span>';
+  document.getElementById('gc_ttl').textContent=s.name;
+  document.getElementById('gc_dsc').textContent=s.desc;
+  document.getElementById('gc_tgs').innerHTML=s.tags.map(t=>`<span class="gc-tag">${t}</span>`).join('');
+  document.getElementById('gc_btn').dataset.q=s.name+' '+s.c;
+  document.getElementById('gcard').classList.add('open');
 };
-window.galScroll=function(el,numId,total){
-  const n=document.getElementById(numId);
-  if(!n)return;
+
+window.closeCard=function(){
+  document.getElementById('gcard').classList.remove('open');
+  document.querySelectorAll('.mwrap.open').forEach(w=>w.classList.remove('open'));
+};
+
+window.gcDots=function(el){
   const idx=Math.round(el.scrollLeft/el.offsetWidth);
-  n.textContent=(idx+1)+' / '+total;
+  document.querySelectorAll('#gc_d .gc-dot').forEach((d,i)=>d.classList.toggle('act',i===idx));
 };
 
 function buildSidebar(){
@@ -524,20 +525,15 @@ function buildMarkers(){
       const el=this.getElement();if(el)el.style.zIndex='';
     });
     m.on('click',function(e){
-      if(window.innerWidth>640)return;
-      const nt=e.originalEvent&&e.originalEvent.target;
-      if(nt&&nt.closest&&nt.closest('.mcard'))return;
-      const el=this.getElement();if(!el)return;
-      const wrap=el.querySelector('.mwrap');if(!wrap)return;
-      const wasOpen=wrap.classList.contains('open');
-      document.querySelectorAll('.mwrap.open').forEach(w=>{w.classList.remove('open');w.classList.remove('open-down');});
+      const el=this.getElement();
+      document.querySelectorAll('.mwrap.open').forEach(w=>w.classList.remove('open'));
       document.querySelectorAll('.leaflet-marker-icon').forEach(x=>x.style.zIndex='');
-      if(!wasOpen){
-        wrap.classList.add('open');
-        const pt=map.latLngToContainerPoint(this.getLatLng());
-        if(pt.y<window.innerHeight*0.42)wrap.classList.add('open-down');
+      if(el){
+        const wrap=el.querySelector('.mwrap');
+        if(wrap)wrap.classList.add('open');
         el.style.zIndex='10000';
       }
+      showCard(s);
       L.DomEvent.stopPropagation(e);
     });
     allMarkers.push({marker:m,spot:s});
@@ -570,10 +566,7 @@ function initMap(){
     attribution:'© <a href="https://www.openstreetmap.org">OpenStreetMap</a> © <a href="https://carto.com">CARTO</a>',
     subdomains:'abcd',maxZoom:19
   }).addTo(map);
-  map.on('click',function(){
-    document.querySelectorAll('.mwrap.open').forEach(w=>{w.classList.remove('open');w.classList.remove('open-down');});
-    document.querySelectorAll('.leaflet-marker-icon').forEach(el=>el.style.zIndex='');
-  });
+  map.on('click',function(){ closeCard(); });
   buildSidebar();
   buildMarkers();
   buildLegend();
@@ -583,5 +576,22 @@ function initMap(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMap);
 else initMap();
 </script>
+
+<div id="gcard">
+  <div class="gc-handle" onclick="closeCard()"></div>
+  <div class="gc-gal">
+    <div class="gc-scroll" id="gc_s" onscroll="gcDots(this)"></div>
+    <div class="gc-dots" id="gc_d"></div>
+    <button class="gc-close" onclick="closeCard()">✕</button>
+  </div>
+  <div class="gc-body">
+    <div class="gc-loc" id="gc_loc"></div>
+    <div class="gc-title" id="gc_ttl"></div>
+    <div class="gc-desc" id="gc_dsc"></div>
+    <div class="gc-tags" id="gc_tgs"></div>
+    <div class="gc-sep"></div>
+    <button class="gc-gbtn" id="gc_btn" onclick="window.open('https://www.google.com/search?tbm=isch&q='+encodeURIComponent(this.dataset.q),'_blank')">Ver mais fotos no Google →</button>
+  </div>
+</div>
 </body>
 </html>
