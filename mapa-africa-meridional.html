@@ -105,6 +105,12 @@ body{display:flex;flex-direction:column}
 .rleg-ln{width:26px;height:3px;flex-shrink:0;border-radius:2px}
 .dark-tt{background:rgba(15,23,42,.95)!important;border:1px solid #374151!important;border-radius:5px!important;color:#e6edf3!important;font-size:.73rem!important;font-weight:600!important;box-shadow:0 3px 10px rgba(0,0,0,.65)!important;padding:5px 10px!important;line-height:1.6!important}
 .dark-tt::before{display:none!important}
+#price-filter{display:none;align-items:center;gap:5px;padding:0 4px;border-left:1px solid #374151;margin-left:4px}
+#price-filter.show{display:flex}
+#price-slider{-webkit-appearance:none;appearance:none;width:88px;height:3px;border-radius:2px;background:#374151;outline:none;cursor:pointer}
+#price-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#60a5fa;cursor:pointer;border:2px solid #1e293b;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+#price-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#60a5fa;cursor:pointer;border:2px solid #1e293b;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+#price-label{font-size:.67rem;color:#60a5fa;font-weight:700;white-space:nowrap;min-width:42px;text-align:right}
 @media(max-width:640px){
   #topbar p{display:none}
   #topbar{padding:8px 10px;gap:6px;flex-wrap:wrap}
@@ -138,6 +144,11 @@ body{display:flex;flex-direction:column}
     <button class="filter-btn" onclick="filterSpots('unico',this)">✨ Únicos</button>
     <button id="btn-air" class="filter-btn" onclick="toggleAir()" style="border-color:#60a5fa88;color:#60a5fa">✈️ Aéreo</button>
     <button id="btn-gnd" class="filter-btn" onclick="toggleGnd()" style="border-color:#fb923c88;color:#fb923c">🚗 Terrestre</button>
+    <div id="price-filter">
+      <span style="font-size:.75rem;color:#94a3b8">💰</span>
+      <input type="range" id="price-slider" min="0" max="700" value="700" step="25" oninput="onPriceSlide(this.value)">
+      <span id="price-label">Todos</span>
+    </div>
   </div>
 </div>
 <div id="sb-overlay" onclick="toggleSidebar()"></div>
@@ -355,7 +366,16 @@ const ROUTES=[
 ];
 
 let airLayer=null,gndLayer=null,hubLayer=null,airVisible=false,gndVisible=false;
+let routeData=[],priceMax=700;
 const USD_BRL=5.75;
+
+function avgPrice(p){
+  if(!p||p==='—')return 0;
+  const m=p.match(/\$(\d+)[–\-](\d+)/);
+  if(!m)return 0;
+  return(+m[1]+ +m[2])/2;
+}
+
 function brlLabel(p){
   const m=p.match(/\$(\d+)[–\-](\d+)/);
   if(!m)return '';
@@ -363,6 +383,29 @@ function brlLabel(p){
   const s=v>=1000?Math.floor(v/1000)+'.'+String(v%1000).padStart(3,'0'):String(v);
   return ` (R$${s})`;
 }
+
+function setLineVis(line,vis){
+  line.setStyle({opacity:vis?.85:0});
+  const el=line.getElement&&line.getElement();
+  if(el)el.style.pointerEvents=vis?'':'none';
+}
+
+function applyPriceFilter(){
+  routeData.forEach(rd=>{
+    const showA=rd.airMinP<=priceMax;
+    const showG=rd.gndMinP<=priceMax;
+    rd.airLines.forEach(l=>setLineVis(l,showA));
+    rd.airHits.forEach(l=>setLineVis(l,showA));
+    rd.gndLines.forEach(l=>setLineVis(l,showG));
+    rd.gndHits.forEach(l=>setLineVis(l,showG));
+  });
+}
+
+window.onPriceSlide=function(v){
+  priceMax=+v;
+  document.getElementById('price-label').textContent=+v>=700?'Todos':'≤ $'+v;
+  if(routeData.length)applyPriceFilter();
+};
 
 function routePopup(r){
   const ha=HUBS[r.a],hb=HUBS[r.b];
@@ -389,6 +432,7 @@ function curved(a,b,dir,n=24){
 }
 
 function buildRouteLayers(){
+  routeData=[];
   hubLayer=L.layerGroup();
   Object.values(HUBS).forEach(h=>{
     L.circleMarker([h.lat,h.lng],{
@@ -414,22 +458,32 @@ function buildRouteLayers(){
     if(air)ttLines.push(`✈ ${air.t}${brlLabel(air.p)}`);
     if(gnd)ttLines.push(`${gnd.i} ${gnd.t}`);
     const tt=ttLines.join('<br>');
-    function makeLine(layer,color,dashArray,dir){
+    const airModes=r.m.filter(x=>x.i==='✈️');
+    const gndModes=r.m.filter(x=>x.i!=='✈️');
+    const rd={
+      airMinP:airModes.length?Math.min(...airModes.map(x=>avgPrice(x.p))):Infinity,
+      gndMinP:gndModes.length?Math.min(...gndModes.map(x=>avgPrice(x.p))):Infinity,
+      airLines:[],gndLines:[],airHits:[],gndHits:[]
+    };
+    function makeLine(layer,color,dashArray,dir,isAir){
       const pts=curved([ha.lat,ha.lng],[hb.lat,hb.lng],dir);
       const line=L.polyline(pts,{color,weight:w,opacity:.85,dashArray})
         .bindPopup(popup,popOpts).addTo(layer);
       line.bindTooltip(tt,{sticky:true,className:'dark-tt',offset:[0,-6]});
+      if(isAir)rd.airLines.push(line);else rd.gndLines.push(line);
       if(mob){
         const hit=L.polyline(pts,{color:'transparent',weight:18,opacity:.001}).addTo(layer);
         hit.on('click',function(e){line.openPopup(e.latlng);if(e.originalEvent)e.originalEvent.stopPropagation();});
         line.on('click',function(e){this.openPopup(e.latlng);if(e.originalEvent)e.originalEvent.stopPropagation();});
+        if(isAir)rd.airHits.push(hit);else rd.gndHits.push(hit);
       }else{
         line.on('mouseover',function(){this.setStyle({weight:w+1.5,opacity:1});});
         line.on('mouseout',function(){this.setStyle({weight:w,opacity:.85});});
       }
     }
-    if(hasAir)makeLine(airLayer,'#60a5fa','5,4',hasBoth?0.5:0.3);
-    if(hasGnd)makeLine(gndLayer,'#fb923c',null,hasBoth?-0.5:-0.3);
+    if(hasAir)makeLine(airLayer,'#60a5fa','5,4',hasBoth?0.5:0.3,true);
+    if(hasGnd)makeLine(gndLayer,'#fb923c',null,hasBoth?-0.5:-0.3,false);
+    routeData.push(rd);
   });
 }
 
@@ -438,6 +492,8 @@ function updateRouteVis(){
   if(on&&hubLayer&&!map.hasLayer(hubLayer))hubLayer.addTo(map);
   else if(!on&&hubLayer)map.removeLayer(hubLayer);
   document.getElementById('rlayer-wrap').classList.toggle('routes-on',on);
+  document.getElementById('price-filter').classList.toggle('show',on);
+  if(on&&routeData.length)applyPriceFilter();
 }
 window.toggleAir=function(){
   if(!airLayer)buildRouteLayers();
