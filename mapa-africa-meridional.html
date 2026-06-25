@@ -291,6 +291,8 @@ const HUBS={
   liw:{n:"Liwonde",lat:-15.0,lng:35.3},
   slm:{n:"Lago Malawi (Nkhotakota)",lat:-12.9,lng:34.3},
   qui:{n:"Quirimbas",lat:-11.5,lng:40.5},
+  plz:{n:"Port Elizabeth (Gqeberha)",lat:-33.98,lng:25.61},
+  els:{n:"East London",lat:-33.03,lng:27.83},
 };
 const ROUTES=[
   {a:"jnb",b:"cpt",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–150",c:"FlySafair · Kulula"},{i:"🚌",d:"Ônibus",t:"14h",p:"$35",c:"Intercape"}]},
@@ -333,6 +335,16 @@ const ROUTES=[
   {a:"liw",b:"bew",m:[{i:"🚌",d:"Ônibus",t:"8h",p:"$15–25",c:"via Zobue · EN7"}]},
   {a:"lil",b:"slm",m:[{i:"🚗",d:"Carro",t:"3h",p:"—",c:"M18 via Dowa"}]},
   {a:"pem",b:"qui",m:[{i:"🚗",d:"Carro",t:"3h",p:"—",c:"EN380 norte"}]},
+  {a:"cpt",b:"dur",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–130",c:"Safair · LIFT · CemAir"}]},
+  {a:"cpt",b:"wdh",m:[{i:"✈️",d:"Voo",t:"2h10m",p:"$150–280",c:"Airlink · Safair"}]},
+  {a:"cpt",b:"hre",m:[{i:"✈️",d:"Voo",t:"3h10m",p:"$200–380",c:"Airlink"}]},
+  {a:"cpt",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h10m",p:"$55–100",c:"Airlink · Safair"}]},
+  {a:"cpt",b:"els",m:[{i:"✈️",d:"Voo",t:"1h35m",p:"$65–120",c:"CemAir · Safair"}]},
+  {a:"jnb",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h45m",p:"$65–120",c:"Airlink · Safair · SAA"}]},
+  {a:"jnb",b:"els",m:[{i:"✈️",d:"Voo",t:"1h30m",p:"$60–110",c:"Airlink · CemAir · Safair"}]},
+  {a:"dur",b:"plz",m:[{i:"✈️",d:"Voo",t:"1h",p:"$60–100",c:"Airlink · Safair"}]},
+  {a:"dur",b:"els",m:[{i:"✈️",d:"Voo",t:"45min",p:"$50–90",c:"Airlink · CemAir"}]},
+  {a:"plz",b:"els",m:[{i:"🚗",d:"Carro",t:"2h30m",p:"—",c:"N2 pela costa"}]},
 ];
 
 let routeLayer=null,routesVisible=false;
