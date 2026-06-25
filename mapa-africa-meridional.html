@@ -51,7 +51,7 @@ body{display:flex;flex-direction:column}
 #gcard{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -4px 32px rgba(0,0,0,.22);transform:translateY(110%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:82vh;display:flex;flex-direction:column;overflow:hidden}
 #gcard.open{transform:translateY(0)}
 .gc-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:10px auto 0;flex-shrink:0;cursor:grab}
-.gc-gal{position:relative;height:240px;flex-shrink:0;overflow:hidden;background:#f0f0f0}
+.gc-gal{position:relative;height:360px;flex-shrink:0;overflow:hidden;background:#f0f0f0}
 .gc-scroll{display:flex;height:100%;overflow-x:scroll;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none}
 .gc-scroll::-webkit-scrollbar{display:none}
 .gc-slide{min-width:100%;height:100%;scroll-snap-align:start;flex-shrink:0}
@@ -122,7 +122,7 @@ body{display:flex;flex-direction:column}
   #legend .lt{display:none}
   #rlayer-wrap{position:fixed;top:auto;bottom:55px;right:0}
   #rlayer-legend{font-size:.7rem}
-  .gc-gal{height:200px}
+  .gc-gal{height:300px}
 }
 </style>
 </head>
@@ -303,9 +303,9 @@ const ROUTES=[
   {a:"jnb",b:"vic",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–180",c:"Airlink · Fastjet"},{i:"🚌",d:"Ônibus",t:"11h",p:"$40–55",c:"Intercape"}]},
   {a:"jnb",b:"mun",m:[{i:"✈️",d:"Voo",t:"2h",p:"$120–250",c:"Airlink"}]},
   {a:"jnb",b:"ksn",m:[{i:"✈️",d:"Voo",t:"2h",p:"$130–260",c:"Airlink"}]},
-  {a:"jnb",b:"lun",m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$150–300",c:"Airlink"}]},
+  {a:"jnb",b:"lun",m:[{i:"✈️",d:"Voo",t:"2.5h",p:"$150–300",c:"Airlink"},{i:"🚌",d:"Ônibus",t:"15h",p:"$40–60",c:"Intercape via Harare · Beit Bridge"}]},
   {a:"jnb",b:"lil",m:[{i:"✈️",d:"Voo",t:"3h",p:"$180–380",c:"Malawian Airlines"}]},
-  {a:"jnb",b:"hre",m:[{i:"✈️",d:"Voo",t:"2h",p:"$100–200",c:"Airlink · Fastjet"}]},
+  {a:"jnb",b:"hre",m:[{i:"✈️",d:"Voo",t:"2h",p:"$100–200",c:"Airlink · Fastjet"},{i:"🚌",d:"Ônibus",t:"9h",p:"$30–45",c:"Greyhound · Intercape via Beit Bridge"}]},
   {a:"jnb",b:"bew",m:[{i:"✈️",d:"Voo",t:"2h",p:"$120–250",c:"LAM · Airlink"}]},
   {a:"jnb",b:"tna",m:[{i:"✈️",d:"Voo",t:"4h",p:"$300–650",c:"Air Madagascar"}]},
   {a:"wdh",b:"mun",m:[{i:"🚗",d:"Carro",t:"8–9h",p:"—",c:"Trans-Kalahari Hwy"}]},
@@ -348,6 +348,10 @@ const ROUTES=[
   {a:"dur",b:"els",m:[{i:"✈️",d:"Voo",t:"45min",p:"$50–90",c:"Airlink · CemAir"},{i:"🚗",d:"Carro",t:"4h30m",p:"—",c:"N2"}]},
   {a:"plz",b:"els",m:[{i:"🚗",d:"Carro",t:"2h30m",p:"—",c:"N2 pela costa"}]},
   {a:"plz",b:"geo",m:[{i:"🚗",d:"Carro",t:"3h30m",p:"—",c:"N2 Garden Route"}]},
+  {a:"geo",b:"els",m:[{i:"🚗",d:"Carro",t:"5h",p:"—",c:"N2 Garden Route · Costa Selvagem"}]},
+  {a:"hre",b:"bew",m:[{i:"🚗",d:"Carro",t:"5h",p:"—",c:"A3 via Mutare · EN6 Chimoio"}]},
+  {a:"lun",b:"ksn",m:[{i:"🚗",d:"Carro",t:"4h30m",p:"—",c:"M10 via Sesheke · Kazungula"}]},
+  {a:"mun",b:"vic",m:[{i:"🚗",d:"Carro",t:"6h",p:"—",c:"A3 via Nata · Francistown"}]},
 ];
 
 let airLayer=null,gndLayer=null,hubLayer=null,airVisible=false,gndVisible=false;
@@ -372,13 +376,16 @@ function routePopup(r){
   return `<div class="rpop"><div class="rpop-name">${ha.n} ↔ ${hb.n}</div>${rows}</div>`;
 }
 
-function curved(a,b,dir){
+function curved(a,b,dir,n=24){
   const mlat=(a[0]+b[0])/2,mlng=(a[1]+b[1])/2;
   const dlat=b[0]-a[0],dlng=b[1]-a[1];
   const len=Math.sqrt(dlat*dlat+dlng*dlng);
   if(len<0.001)return [a,b];
-  const k=len*0.14*dir;
-  return [a,[mlat-dlng/len*k,mlng+dlat/len*k],b];
+  const k=len*0.26*dir;
+  const cx=mlat-dlng/len*k,cy=mlng+dlat/len*k;
+  const pts=[];
+  for(let i=0;i<=n;i++){const t=i/n;pts.push([(1-t)*(1-t)*a[0]+2*(1-t)*t*cx+t*t*b[0],(1-t)*(1-t)*a[1]+2*(1-t)*t*cy+t*t*b[1]]);}
+  return pts;
 }
 
 function buildRouteLayers(){
@@ -392,7 +399,7 @@ function buildRouteLayers(){
   gndLayer=L.layerGroup();
   const mob=window.innerWidth<=640;
   const pw=Math.min(320,window.innerWidth-48);
-  const w=mob?2:1;
+  const w=mob?3:2;
   ROUTES.forEach(r=>{
     const ha=HUBS[r.a],hb=HUBS[r.b];
     if(!ha||!hb)return;
