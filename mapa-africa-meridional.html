@@ -12,7 +12,7 @@
 html,body{height:100%;font-family:'Raleway',-apple-system,sans-serif;background:#160D04;color:#F5EDD9;overflow:hidden}
 body{display:flex;flex-direction:column}
 #topbar{background:#241306;border-bottom:1px solid #5C3817;padding:10px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
-#topbar h1{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;letter-spacing:.06em;white-space:nowrap;color:#F5EDD9}
+#topbar h1{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;letter-spacing:.06em;white-space:nowrap;color:#F5EDD9;display:flex;align-items:center;gap:6px}
 #topbar p{font-size:.73rem;color:#9E7B50;letter-spacing:.02em}
 #mob-sb-btn{display:none;align-items:center;justify-content:center;width:32px;height:32px;border-radius:7px;border:1px solid #5C3817;background:transparent;color:#9E7B50;cursor:pointer;font-size:1rem;flex-shrink:0;line-height:1}
 #mob-sb-btn:hover{background:#3A1C08;color:#F5EDD9}
@@ -140,7 +140,7 @@ body{display:flex;flex-direction:column}
 </head>
 <body>
 <div id="topbar">
-  <h1>🌍 África Meridional</h1>
+  <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 116 126" width="26" height="28" style="flex-shrink:0"><path fill="#E07B39" stroke="#1A1008" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round" d="M22,5 C45,4 60,6 68,10 C76,13 80,22 88,28 L92,35 C89,42 85,48 82,55 C80,62 80,70 78,78 C76,85 70,92 62,103 C57,108 52,112 47,111 C43,110 40,107 38,103 C36,98 36,92 36,86 C36,79 36,72 36,66 C36,60 36,54 36,52 C37,50 40,48 40,47 C38,46 34,45 28,44 C22,44 18,44 14,46 C10,48 7,49 5,46 C4,43 4,40 5,35 C6,28 9,21 12,15 C15,10 19,6 22,5 Z"/><path fill="#E07B39" stroke="#1A1008" stroke-width="4" stroke-linejoin="round" d="M100,60 C98,55 94,57 93,62 C92,67 93,76 97,79 C101,82 104,80 105,75 C106,70 102,65 100,60 Z"/></svg>África Meridional</h1>
   <p>24 destinos imperdíveis · Passe o mouse nos marcadores ou clique na lista</p>
   <div class="filter-row">
     <button class="filter-btn active" onclick="filterSpots('all',this)">Todos</button>
@@ -193,6 +193,7 @@ body{display:flex;flex-direction:column}
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
   onerror="document.getElementById('err').style.display='flex'"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 <script>
 const CTRY={
   "Namíbia":      {code:"na",color:"#E07B39"},
@@ -203,6 +204,8 @@ const CTRY={
   "Moçambique":   {code:"mz",color:"#20B2AA"},
   "Madagascar":   {code:"mg",color:"#9B59B6"},
   "Malawi":       {code:"mw",color:"#3498DB"},
+  "Lesoto":       {code:"ls",color:"#E74C3C"},
+  "Essuatíni":    {code:"sz",color:"#F39C12"},
 };
 function flagImg(code,h){return `<img src="https://flagcdn.com/w40/${code}.png" height="${h||13}" style="border-radius:2px;vertical-align:middle" alt="">`;}
 function flagBig(code){return `<img src="https://flagcdn.com/w80/${code}.png" height="36" style="border-radius:4px;opacity:.8" alt="">`;}
@@ -290,6 +293,14 @@ const SPOTS=[
   {name:"Liwonde NP",c:"Malawi",lat:-15.0,lng:35.3,cat:["safari"],
    photos:["https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Liwonde_Park_-_view_of_Shire_River.jpg/1280px-Liwonde_Park_-_view_of_Shire_River.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Liwonde_NP_crocodiles.jpg/1280px-Liwonde_NP_crocodiles.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Portrait_Hippopotamus_in_the_water.jpg/1280px-Portrait_Hippopotamus_in_the_water.jpg"],
    desc:"Safari de barco no Rio Shire entre elefantes que entram na água e hipopótamos.",tags:["Barco","Elefantes","Íntimo"]},
+
+  {name:"Maletsunyane",c:"Lesoto",lat:-29.83,lng:28.04,cat:["paisagem","unico"],
+   photos:["https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Maletsunyane_Falls.jpg/1280px-Maletsunyane_Falls.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Sani_Pass_Lesotho_3.jpg/1280px-Sani_Pass_Lesotho_3.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Lesotho-highlands.jpg/1280px-Lesotho-highlands.jpg"],
+   desc:"Cachoeira de 192m — uma das maiores quedas d'água da África. Acesso a cavalo pelas Montanhas Maluti (3.000m+).",tags:["Cachoeira","Montanha","Único"]},
+
+  {name:"Hlane Royal NP",c:"Essuatíni",lat:-26.15,lng:31.87,cat:["safari"],
+   photos:["https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Hlane_Royal_National_Park.jpg/1280px-Hlane_Royal_National_Park.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rhinos%2C_Hlane_National_Park%2C_Swaziland.jpg/1280px-Rhinos%2C_Hlane_National_Park%2C_Swaziland.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Lion%2C_Hlane_Royal_National_Park%2C_Swaziland.jpg/1280px-Lion%2C_Hlane_Royal_National_Park%2C_Swaziland.jpg"],
+   desc:"Parque real de Essuatíni — leões, rinocerontes brancos e elefantes num destino safari raramente visitado a 4h de Joburg.",tags:["Big 5","Safari","Real"]},
 ];
 
 const HUBS={
@@ -318,6 +329,8 @@ const HUBS={
   qui:{n:"Quirimbas",lat:-11.5,lng:40.5},
   plz:{n:"Port Elizabeth (Gqeberha)",lat:-33.98,lng:25.61},
   els:{n:"East London",lat:-33.03,lng:27.83},
+  msk:{n:"Maseru",lat:-29.32,lng:27.48},
+  mbn:{n:"Mbabane",lat:-26.32,lng:31.13},
 };
 const ROUTES=[
   {a:"jnb",b:"cpt",m:[{i:"✈️",d:"Voo",t:"2h",p:"$80–150",c:"FlySafair · Kulula"},{i:"🚌",d:"Ônibus",t:"14h",p:"$35",c:"Intercape"}]},
@@ -375,6 +388,11 @@ const ROUTES=[
   {a:"hre",b:"bew",m:[{i:"🚗",d:"Carro",t:"5h",p:"—",c:"A3 via Mutare · EN6 Chimoio"}]},
   {a:"lun",b:"ksn",m:[{i:"🚗",d:"Carro",t:"4h30m",p:"—",c:"M10 via Sesheke · Kazungula"}]},
   {a:"mun",b:"vic",m:[{i:"🚗",d:"Carro",t:"6h",p:"—",c:"A3 via Nata · Francistown"}]},
+  {a:"jnb",b:"msk",m:[{i:"✈️",d:"Voo",t:"45min",p:"$80–150",c:"Airlink (Moshoeshoe I Int'l)"},{i:"🚗",d:"Carro",t:"4–5h",p:"—",c:"N1 via Bloemfontein · Maseru Bridge"},{i:"🚌",d:"Ônibus",t:"5h",p:"$20–30",c:"Intercape · Mathabo Tours"}]},
+  {a:"dur",b:"msk",m:[{i:"🚗",d:"Carro",t:"5h",p:"—",c:"N3 via Harrismith · Caledonspoort"},{i:"🚌",d:"Ônibus",t:"6h",p:"$20–35",c:"Translux · Mathabo Tours"}]},
+  {a:"jnb",b:"mbn",m:[{i:"✈️",d:"Voo",t:"45min",p:"$80–140",c:"Airlink (Sikhuphe Int'l)"},{i:"🚗",d:"Carro",t:"4h",p:"—",c:"N4 / R40 via Nelspruit · Oshoek"},{i:"🚌",d:"Ônibus",t:"5h",p:"$20–35",c:"Baz Bus · Innotrans"}]},
+  {a:"mpq",b:"mbn",m:[{i:"🚗",d:"Carro",t:"2.5h",p:"—",c:"EN4 via Namaacha · Lomahasha"},{i:"🚌",d:"Ônibus",t:"3h",p:"$10–20",c:"Linhas locais via Namaacha"}]},
+  {a:"dur",b:"mbn",m:[{i:"🚗",d:"Carro",t:"4.5h",p:"—",c:"N2 via Richards Bay · Lavumisa"},{i:"🚌",d:"Ônibus",t:"5.5h",p:"$20–35",c:"Baz Bus"}]},
 ];
 
 let airLayer=null,gndLayer=null,hubLayer=null,airVisible=false,gndVisible=false;
@@ -685,6 +703,26 @@ window.flyToCountry=function(cn){
   if(c)map.flyTo(c,7,{duration:1.2});
 };
 
+async function buildCountryLayers(){
+  try{
+    if(typeof topojson==='undefined')return;
+    const resp=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const world=await resp.json();
+    const CLRS={
+      "516":{c:"#D4A853"},"72":{c:"#4CAF50"},"716":{c:"#20B2AA"},
+      "894":{c:"#FF8C00"},"710":{c:"#88C057"},"508":{c:"#00BCD4"},
+      "450":{c:"#AB47BC"},"454":{c:"#42A5F5"},"426":{c:"#FF5722"},"748":{c:"#CE93D8"},
+    };
+    topojson.feature(world,world.objects.countries).features.forEach(feat=>{
+      const info=CLRS[String(feat.id)];
+      if(!info)return;
+      L.geoJSON(feat,{
+        style:{fillColor:info.c,fillOpacity:0.17,color:info.c,weight:0.7,opacity:0.35,interactive:false}
+      }).addTo(map);
+    });
+  }catch(e){console.warn('country layers:',e);}
+}
+
 function initMap(){
   if(typeof L==='undefined'){document.getElementById('err').style.display='flex';return;}
   map=L.map('map',{center:[-18,30],zoom:5});
@@ -698,12 +736,20 @@ function initMap(){
     document.querySelectorAll('.mwrap.open').forEach(w=>w.classList.remove('open'));
     document.querySelectorAll('.leaflet-marker-icon').forEach(el=>el.style.zIndex='');
   });
+  buildCountryLayers();
   buildSidebar();
   buildMarkers();
   buildLegend();
   toggleAir();
   toggleGnd();
 }
+
+(function(){
+  const sv=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 116 126"><path fill="#E07B39" stroke="#1A1008" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round" d="M22,5 C45,4 60,6 68,10 C76,13 80,22 88,28 L92,35 C89,42 85,48 82,55 C80,62 80,70 78,78 C76,85 70,92 62,103 C57,108 52,112 47,111 C43,110 40,107 38,103 C36,98 36,92 36,86 C36,79 36,72 36,66 C36,60 36,54 36,52 C37,50 40,48 40,47 C38,46 34,45 28,44 C22,44 18,44 14,46 C10,48 7,49 5,46 C4,43 4,40 5,35 C6,28 9,21 12,15 C15,10 19,6 22,5 Z"/><path fill="#E07B39" stroke="#1A1008" stroke-width="4" stroke-linejoin="round" d="M100,60 C98,55 94,57 93,62 C92,67 93,76 97,79 C101,82 104,80 105,75 C106,70 102,65 100,60 Z"/></svg>`;
+  const lk=document.createElement('link');lk.rel='icon';lk.type='image/svg+xml';
+  lk.href='data:image/svg+xml,'+encodeURIComponent(sv);
+  document.head.appendChild(lk);
+})();
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMap);
 else initMap();
